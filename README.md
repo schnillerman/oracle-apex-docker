@@ -60,7 +60,7 @@ docker run \
 	-v $(pwd)/express/oradata/:/opt/oracle/oradata \
 	container-registry.oracle.com/database/express:latest
 ```
-> [!WARNING]
+> [!NOTE]
 > Note that running the container for the first time (initialization of persistent data) takes a long time - on my Synology DS918+, it took ~2.5hrs.
 
 ### Run Temporary ORDS-Developer Container to Setup/Install APEX in the Express DB
@@ -100,9 +100,77 @@ After successful check, the container can be stopped and removed (```docker stop
 If you don't want to check right now, add the line ```--rm`\``` after ```-d \``` in order to remove the temporary container after APEX is installed.
 
 ### Finalize Setup
+#### Download & Extract APEX Files
+```
+mkdir ./apex && \
+cd ./apex && \
+curl -o apex.zip https://download.oracle.com/otn_software/apex/apex-latest.zip && \
+unzip -q apex.zip
+```
 #### Run Docker Compose for APEX
-#### Log Into APEX
+```
+services:
+  express: # XE database
+    image: container-registry.oracle.com/database/express:latest # 21.3.0-xe
+    container_name: rad-oracle-apex-express
+    # hostname: oracledev
+    restart: unless-stopped
+    # env_file: .env
+    environment:
+      - ORACLE_PWD=${ORACLE_PWD}
+    networks:
+      - apex
+    ports:
+      - 1521:1521
+    #  - 5500:5500
+    # depends_on:
+      # - oracle-ords
+    volumes:
+      # - /volume1/docker/rad-ORACLE/express:/mnt/express:rw
+      - ./express/oradata:/opt/oracle/oradata
+      - ./express/scripts/setup:/opt/oracle/scripts/setup
+      - ./express/scripts/startup:/opt/oracle/scripts/startup
+    #healthcheck:
+    #  test: ["CMD", "curl", "-f", "http://localhost:1521"]
+    #  interval: 1m30s
+    #  timeout: 10s
+    #  retries: 10
+    #  start_period: 7m30s
+    #  start_interval: 5s # not allowed?
 
+  ords:
+    #image: container-registry.oracle.com/database/ords-developer:latest
+    image: container-registry.oracle.com/database/ords:latest
+    container_name: rad-oracle-apex-ords
+    restart: unless-stopped
+    depends_on:
+      express:
+        condition: service_healthy
+    volumes:
+    #  - ./ORDS/variables:/opt/oracle/variables
+      - ./ORDS/config:/etc/ords/config
+      - ./ORDS/apex/:/opt/oracle/apex
+    networks:
+      - apex
+    ports:
+      - 58080:8080
+
+networks:
+  apex:
+    name: rad-oracle-apex
+```
+> [!IMPORTANT]
+> run the CLI of the docker in order to update the config with the installed APEX files: docker exec -it ```rad-oracle-apex-ords sh```. Then run ```config set standalone.static.path /opt/oracle/apex/images```.
+> Reason: The ords image does not contain the APEX files.
+#### Log Into APEX
+Login:
+
+- Workspace: ```internal```
+- User:      ```ADMIN```
+- Password:  ```Welcome_1```
+
+> [!WARNING]
+> If you changed the password during log-in check from running the temporary ORDS-Developer container, use the updated password!
 ## Docker Installation Sources
 ### Sources used for new attempt
 * Oracle:
