@@ -13,6 +13,13 @@ This docker project contains the following:
 
 ## TL;DR
 Here's the recipe to get this done:
+1. [Create folders](https://github.com/schnillerman/oracle-apex-docker/edit/main/README.md#prepare-directories-for-persistent-data)
+2. [Initialize Express DB](https://github.com/schnillerman/oracle-apex-docker/edit/main/README.md#create--run-express-container-to-setup-persistent-db)
+3. [Setup APEX in the Express DB](https://github.com/schnillerman/oracle-apex-docker/edit/main/README.md#run-temporary-ords-developer-container-to-setupinstall-apex-in-the-express-db)
+4. [Download APEX files](https://github.com/schnillerman/oracle-apex-docker/tree/main?tab=readme-ov-file#download--extract-apex-files)
+5. [Create & Run Docker Compose](https://github.com/schnillerman/oracle-apex-docker/tree/main?tab=readme-ov-file#run-docker-compose-for-apex)
+
+## Detailed Instructions
 ### Prerequisites
 #### Image Sources
 I wanted to use the following images:
@@ -114,6 +121,18 @@ cd ./apex && \
 curl -o apex.zip https://download.oracle.com/otn_software/apex/apex-latest.zip && \
 unzip -q apex.zip
 ```
+#### Set The APEX Directory In The ORDS Container
+> [!IMPORTANT]
+> Run the ORDS container once in order to update the config with the installed APEX files:
+> ```
+> docker run --network --rm -it \
+>  -v $(pwd)/ORDS/config:/etc/ords/config: \
+>  -v $(pwd)/apex/:/opt/oracle/apex/ \ 
+>  container-registry.oracle.com/database/ords:latest \
+>  config set standalone.static.path /opt/oracle/apex/images
+>  ```
+> Reason: The ords image does not contain the APEX files.
+
 #### Run Docker Compose for APEX
 ```
 services:
@@ -160,15 +179,13 @@ services:
     networks:
       - apex
     ports:
-      - 58080:8080
+      - 8080:8080
 
 networks:
   apex:
     name: rad-oracle-apex
 ```
-> [!IMPORTANT]
-> run the CLI of the docker in order to update the config with the installed APEX files: docker exec -it ```rad-oracle-apex-ords sh```. Then run ```config set standalone.static.path /opt/oracle/apex/images```.
-> Reason: The ords image does not contain the APEX files.
+
 #### Log Into APEX
 Login:
 
