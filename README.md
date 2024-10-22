@@ -5,7 +5,7 @@ So far, with the manuals both on Oracle's website as well as the ones found on b
 
 However, starting to try with some more (docker) experience after procrastinating APEX in the recent 3 years, and with new energy, I found some key hints about getting it done.
 
-##Content
+## Content
 This docker project contains the following:
 * [Oracle Database Express (latest)](https://container-registry.oracle.com/ords/ocr/ba/database/express)
 * [Oracle REST Data Services (ORDS) (latest)](https://container-registry.oracle.com/ords/ocr/ba/database/ords)
