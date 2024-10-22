@@ -1,5 +1,5 @@
 # Install & Run Oracle APEX in a Docker Environment
-![Platform](https://img.shields.io/badge/docker-blue) ![Flavor](https://img.shields.io/badge/docker-compose-DeepSkyBlue)
+![Docker](https://img.shields.io/badge/docker-blue) ![Docker-Compose](https://img.shields.io/badge/docker-compose-00BFFF) ![Oracle](https://img.shields.io/badge/oracle-c74634) ![Oracle-APEX](https://img.shields.io/badge/oracle-apex-ca4d3c)
 ## Why This Repository
 So far, with the manuals both on Oracle's website as well as the ones found on blogs etc. I never really succeeded in putting up the APEX stack on docker.
 
