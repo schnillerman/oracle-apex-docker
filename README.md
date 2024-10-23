@@ -193,6 +193,14 @@ Login:
 
 > [!WARNING]
 > If you changed the password during log-in check from running the temporary ORDS-Developer container, use the updated password!
+
+## Using Nginx Reverse Proxy
+In order to work behind a reverse proxy, the proxy_set_header directive must be set in the proxy host:
+```
+proxy_set_header Origin "";
+```
+![image](https://github.com/user-attachments/assets/012644a9-eb2a-4eaa-9c8a-895fdb262901)
+
 ## Docker Installation Sources
 ### Sources used for new attempt
 * Oracle:
@@ -224,7 +232,7 @@ Login:
 
 ... and a few more.
 
-## APEX Programming
+### APEX Programming
 * Report Generation
   * Responsive Classic Report in ORACLE APEX [https://blogs.ontoorsolutions.com/post/responsive-classic-report-in-oracle-apex/]
   * How to control interative report columns [https://forums.oracle.com/ords/apexds/post/how-to-control-interactive-report-columns-width-9688]
@@ -232,7 +240,7 @@ Login:
   * How to log in with user credentials from database table [https://forums.oracle.com/ords/apexds/post/how-to-log-in-with-user-credentials-from-database-table-6626]
   * Custom Authentication in Oracle APEX [https://o7planning.org/10443/custom-authentication-in-oracle-apex]
 
-## Integration With 3rd Party Tools
+### Integration With 3rd Party Tools
 * Keycloak
   * https://levelupdata.eu/oracle-apex-keycloak/
   * https://stackoverflow.com/questions/45352880/keycloak-invalid-parameter-redirect-uri
