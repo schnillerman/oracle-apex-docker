@@ -141,41 +141,39 @@ services:
     container_name: rad-oracle-apex-express
     # hostname: oracledev
     restart: unless-stopped
-    # env_file: .env
     environment:
-      - ORACLE_PWD=${ORACLE_PWD}
+      - ORACLE_PWD=${ORACLE_PWD} # make sure the declaration is in the .env file as ORACLE_PWD=<your password, non complex, min. 8 chars small, cap, & numbers>
     networks:
       - apex
-    ports:
-      - 1521:1521
+    #ports:
+    #  - 1521:1521
     #  - 5500:5500
     # depends_on:
-      # - oracle-ords
+    #   - oracle-ords
     volumes:
-      # - /volume1/docker/rad-ORACLE/express:/mnt/express:rw
       - ./express/oradata:/opt/oracle/oradata
       - ./express/scripts/setup:/opt/oracle/scripts/setup
       - ./express/scripts/startup:/opt/oracle/scripts/startup
     #healthcheck:
-    #  test: ["CMD", "curl", "-f", "http://localhost:1521"]
-    #  interval: 1m30s
+    #  #test command below is with grep because in my case, the output of checkDBstatus.sh is always "The Oracle base remains unchanged with value /opt/oracle" which seems to indicate the DB is fine.
+    #  test: /opt/oracle/checkDBStatus.sh | grep -q 'remains unchanged'
+    #  interval: 30s
     #  timeout: 10s
     #  retries: 10
-    #  start_period: 7m30s
-    #  start_interval: 5s # not allowed?
+    #  #  start_period: 120s not working on Synology NAS
 
   ords:
     #image: container-registry.oracle.com/database/ords-developer:latest
     image: container-registry.oracle.com/database/ords:latest
     container_name: rad-oracle-apex-ords
     restart: unless-stopped
-    depends_on:
-      express:
-        condition: service_healthy
+    #depends_on:
+    #  express:
+    #    condition: service_healthy
     volumes:
-    #  - ./ORDS/variables:/opt/oracle/variables
+      - ./ORDS/variables:/opt/oracle/variables
       - ./ORDS/config:/etc/ords/config
-      - ./ORDS/apex/:/opt/oracle/apex
+      - ./apex/:/opt/oracle/apex
     networks:
       - apex
     ports:
