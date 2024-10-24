@@ -18,6 +18,7 @@ Here's the recipe to get this done:
 3. [Setup APEX in the Express DB](https://github.com/schnillerman/oracle-apex-docker/edit/main/README.md#run-temporary-ords-developer-container-to-setupinstall-apex-in-the-express-db)
 4. [Download APEX files](https://github.com/schnillerman/oracle-apex-docker/tree/main?tab=readme-ov-file#download--extract-apex-files)
 5. [Create & Run Docker Compose](https://github.com/schnillerman/oracle-apex-docker/tree/main?tab=readme-ov-file#run-docker-compose-for-apex)
+6. Optional: [Access APEX from WAN with HTTPS](https://github.com/schnillerman/oracle-apex-docker/edit/main/README.md#access-apex-from-wan-with-https)
 
 ## Detailed Instructions
 ### Prerequisites
@@ -194,12 +195,22 @@ Login:
 > [!WARNING]
 > If you changed the password during log-in check from running the temporary ORDS-Developer container, use the updated password!
 
-## Using Nginx Reverse Proxy
-In order to work behind a reverse proxy, the proxy_set_header directive must be set in the proxy host:
+## Using Reverse Proxy
+> [!NOTE]
+> This assumes you have some reverse proxy like, e.g., Nginx running with SSL, e.g., letsencrypt.
+### Set_Header Directive
+In order to work behind a reverse proxy, the proxy_set_header directive must be set in the proxy host, e.g., Nginx:
 ```
 proxy_set_header Origin "";
 ```
 ![image](https://github.com/user-attachments/assets/012644a9-eb2a-4eaa-9c8a-895fdb262901)
+
+### Access APEX from WAN with HTTPS
+Put the following 2 lines into ```./ORDS/config/global/settings.xml```, replacing ```<your apex domain, no trailing slash>```:
+```
+<entry key="security.externalSessionTrustedOrigins">http://<your apex domain, no trailing slash>, https://<your apex domain, no trailing slash>:443</entry>
+<entry key="security.forceHTTPS">true</entry>
+```
 
 ## Docker Installation Sources
 ### Sources used for new attempt
