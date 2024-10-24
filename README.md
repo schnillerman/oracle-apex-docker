@@ -212,6 +212,7 @@ proxy_set_header Origin "";
 * https://github.com/akridge/oracle-apex-docker-stack?tab=readme-ov-file#how-to-install
 * Docker Compose for Oracle APEX (https://tm-apex.hashnode.dev/docker-compose-for-oracle-apex)
 * Oracle 23c Free Docker, APEX & ORDS – all in one simple guide - Pretius (https://pretius.com/blog/oracle-apex-docker-ords/)
+* ... and, finally, for SSL: [How to Secure Oracle APEX Development Environment with Free SSL from Let's Encrypt?](https://www.youtube.com/watch?v=cRE_kxjz_zw)
 
 ### Sources used years ago
 * oracle-apex-docker-stack [https://github.com/akridge/oracle-apex-docker-stack]
