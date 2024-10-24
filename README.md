@@ -16,8 +16,8 @@ Here's the recipe to get this done:
 1. [Create folders](https://github.com/schnillerman/oracle-apex-docker/edit/main/README.md#prepare-directories-for-persistent-data)
 2. [Initialize Express DB](https://github.com/schnillerman/oracle-apex-docker/edit/main/README.md#create--run-express-container-to-setup-persistent-db)
 3. [Setup APEX in the Express DB](https://github.com/schnillerman/oracle-apex-docker/edit/main/README.md#run-temporary-ords-developer-container-to-setupinstall-apex-in-the-express-db)
-4. [Download APEX files](https://github.com/schnillerman/oracle-apex-docker/tree/main?tab=readme-ov-file#download--extract-apex-files)
-5. [Create & Run Docker Compose](https://github.com/schnillerman/oracle-apex-docker/tree/main?tab=readme-ov-file#run-docker-compose-for-apex)
+4. [Download APEX files](https://github.com/schnillerman/oracle-apex-docker/edit/main/README.md#download--extract-apex-files)
+5. [Create & Run Docker Compose](https://github.com/schnillerman/oracle-apex-docker/edit/main/README.md#run-docker-compose-for-apex)
 6. Optional: [Access APEX from WAN with HTTPS](https://github.com/schnillerman/oracle-apex-docker/edit/main/README.md#access-apex-from-wan-with-https)
 
 ## Detailed Instructions
