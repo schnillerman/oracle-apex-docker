@@ -212,6 +212,21 @@ Put the following 2 lines into ```./ORDS/config/global/settings.xml```, replacin
 <entry key="security.forceHTTPS">true</entry>
 ```
 
+The complete settings.xml might now look similar to:
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Saved on Mon Oct 21 16:07:13 UTC 2024</comment>
+<entry key="database.api.enabled">true</entry>
+<entry key="db.invalidPoolTimeout">5s</entry>
+<entry key="debug.printDebugToScreen">true</entry>
+<entry key="standalone.static.path">/opt/oracle/apex/images</entry>
+<entry key="security.externalSessionTrustedOrigins">http://<your apex domain, no trailing slash>, https://<your apex domain, no trailing slash>:443</entry>
+<entry key="security.forceHTTPS">true</entry>
+</properties>
+```
+
 ## Docker Installation Sources
 ### Sources used for new attempt
 * Oracle:
