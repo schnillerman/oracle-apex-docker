@@ -195,17 +195,7 @@ Login:
 > [!WARNING]
 > If you changed the password during log-in check from running the temporary ORDS-Developer container, use the updated password!
 
-## Using Reverse Proxy
-> [!NOTE]
-> This assumes you have some reverse proxy like, e.g., Nginx running with SSL, e.g., letsencrypt.
-### Set_Header Directive
-In order to work behind a reverse proxy, the proxy_set_header directive must be set in the proxy host, e.g., Nginx:
-```
-proxy_set_header Origin "";
-```
-![image](https://github.com/user-attachments/assets/012644a9-eb2a-4eaa-9c8a-895fdb262901)
-
-### Access APEX from WAN with HTTPS
+## Access APEX from WAN with HTTPS / Reverse Proxy
 Put the following 2 lines into ```./ORDS/config/global/settings.xml```, replacing ```<your apex domain, no trailing slash>```:
 ```
 <entry key="security.externalSessionTrustedOrigins">http://<your apex domain, no trailing slash>, https://<your apex domain, no trailing slash>:443</entry>
