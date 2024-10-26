@@ -18,7 +18,7 @@ Here's the recipe to get this done:
 3. [Setup APEX in the Express DB](https://github.com/schnillerman/oracle-apex-docker/tree/main?tab=readme-ov-file#run-temporary-ords-developer-container-to-setupinstall-apex-in-the-express-db)
 4. [Download APEX files](https://github.com/schnillerman/oracle-apex-docker/tree/main?tab=readme-ov-file#download--extract-apex-files)
 5. [Create & Run Docker Compose](https://github.com/schnillerman/oracle-apex-docker/tree/main?tab=readme-ov-file#run-docker-compose-for-apex)
-6. Optional: [Access APEX from WAN with HTTPS](https://github.com/schnillerman/oracle-apex-docker/tree/main?tab=readme-ov-file#access-apex-from-wan-with-https)
+6. Optional: [Access APEX from WAN with HTTPS / Reverse Proxy](https://github.com/schnillerman/oracle-apex-docker/tree/main?tab=readme-ov-file#access-apex-from-wan-with-https--reverse-proxy)
 
 ## Detailed Instructions
 ### Prerequisites
