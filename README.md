@@ -102,7 +102,7 @@ docker run \
 	-p 8181:8181 \
     container-registry.oracle.com/database/ords-developer:latest
 ```
-If you want to check, run the command as is, and open http://<docker-host>/ords:8181 to see whether the APEX environment has been installed successfully.
+If you want to check, run the command as is, and open ```http://<docker-host>/ords:8181``` to see whether the APEX environment has been installed successfully.
 
 Login:
 
