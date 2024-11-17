@@ -253,6 +253,14 @@ Well, that's a whole different story: [_The workspace/database schema needs to b
 4. Change user password via SQL prompt: ```alter user <user> identified by <password>;``` (replace ```<user```) - every workspace, in the database, is basically a user, hence this step
 5. Go to ```http(s)://<domain name>/ords/sql-developer``` and log in with the credentials used above
 
+> [!WARNING]
+> There seems to be a [bug](https://stackoverflow.com/questions/79093084/oracle-sql-developer-web-navigator-objects-not-loading) in ORDS which prevents objects from loading in SDW's _Data Modeler_ and _SQL Navigator_.
+> The DB user (equals workspace name) therefore needs to be granted resource permissions as follows:
+> ```
+> grant <privilege> to <user>
+> ```
+> This solution might work, with me, it didn't.
+
 ## Access APEX from WAN with HTTPS / Reverse Proxy
 Put the following 2 lines into ```./ORDS/config/global/settings.xml```, replacing ```<your apex domain, no trailing slash>``` with your domain's name:
 ```
