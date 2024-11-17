@@ -233,7 +233,7 @@ Well, that's a whole different story: [_The workspace/database schema needs to b
 > [!IMPORTANT]
 > - The value of ```p_schema``` (```schema-name```) has to be all upper case!
 > - The value of ```p_url_mapping_pattern``` (```schema-alias```) has to be all lower case!
-> - [The ```/``` at the end of the statement is important in order to execute the statement](https://www.oreilly.com/library/view/oracle-sqlplus-the/1565925785/apas06.html).
+> - [The ```/``` at the end of the statement is important in order to execute the statement](https://www.oreilly.com/library/view/oracle-sqlplus-the/1565925785/apas06.html).[^1]
 
    E.g.,
    ```
@@ -321,3 +321,5 @@ The complete settings.xml might now look similar to:
   * https://stackoverflow.com/questions/45352880/keycloak-invalid-parameter-redirect-uri
   * https://stackoverflow.com/questions/53564499/keycloak-invalid-parameter-redirect-uri-behind-a-reverse-proxy
   * OpenID Connect with Nextcloud and Keycloak [https://janikvonrotz.ch/2020/10/20/openid-connect-with-nextcloud-and-keycloak/]
+
+[^1]: See also https://docs.oracle.com/en/database/oracle/oracle-database/21/sqpug/slash.html
