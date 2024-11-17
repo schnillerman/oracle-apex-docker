@@ -95,7 +95,7 @@ Then run the following command to
 ```
 docker run \
 	-d \
-	--name ords \
+	--name rad-oracle-apex-ords \
 	--network rad-oracle-apex \
     -v $(pwd)/ORDS/config:/etc/ords/config \
 	-v $(pwd)/ORDS/variables:/opt/oracle/variables \
