@@ -211,7 +211,8 @@ networks:
    - Password: The one you changed the default password ```Welcome_1``` to
 
 #### Log Into SQL Developer Web (SDW)
-Well, that's a whole different story: [_The user schema needs to be enabled for SDW_](https://docs.oracle.com/en/database/oracle/sql-developer-web/sdwad/accessing-sql-developer-web.html#GUID-63D265FC-7500-4F88-8870-1C60E0A286FF) as follows:
+Well, that's a whole different story: [_The workspace/database schema needs to be enabled for SDW_](https://docs.oracle.com/en/database/oracle/sql-developer-web/sdwad/accessing-sql-developer-web.html#GUID-63D265FC-7500-4F88-8870-1C60E0A286FF) as follows:
+
 1. Log into the _express_ container's CLI:
    - To get to the SQL prompt directly: ```docker exec -it oracle-apex-express sqlplus sys/Welcome1##@//localhost:1521/XEPDB1 as sysdba```
    - Via shell: ```docker exec -it oracle-apex-express sh``` and then enter ```sqlplus sys/Welcome1##@//localhost:1521/XEPDB1 as sysdba``` at the prompt
@@ -236,16 +237,16 @@ Well, that's a whole different story: [_The user schema needs to be enabled for 
    BEGIN
     ords_admin.enable_schema(
      p_enabled => TRUE,
-     p_schema => 'ADMIN',
+     p_schema => 'WORKSPACE1',
      p_url_mapping_type => 'BASE_PATH',
-     p_url_mapping_pattern => 'admin',
+     p_url_mapping_pattern => 'workspace1',
      p_auto_rest_auth => NULL
     );
     commit;
    END;
    ```
-3. Optional: Verify if user (= value used for ```p_schema```) has been enabled with ```select username from all_users order by username```
-4. Change user password via SQL prompt: ```alter user <user> identified by <password>;``` (replace ```<user```)
+3. Optional: Verify if schema (= value used for ```p_schema```) has been enabled with ```select username from all_users order by username```
+4. Change user password via SQL prompt: ```alter user <user> identified by <password>;``` (replace ```<user```) - every workspace, in the database, is basically a user, hence this step
 5. Go to ```http(s)://<domain name>/ords/sql-developer``` and log in with the credentials used above
 
 ## Access APEX from WAN with HTTPS / Reverse Proxy
