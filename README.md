@@ -259,7 +259,7 @@ Well, that's a whole different story: [_The workspace/database schema needs to b
 > ```
 > grant <privilege> to <user>
 > ```
-> This solution might work, with me, it didn't.
+> This solution might work, with me, it didn't. However, the ORDS update from Nov. 8, 2024, solved the issue.
 
 ## Access APEX from WAN with HTTPS / Reverse Proxy
 Put the following 2 lines into ```./ORDS/config/global/settings.xml```, replacing ```<your apex domain, no trailing slash>``` with your domain's name:
