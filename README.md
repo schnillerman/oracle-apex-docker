@@ -58,7 +58,7 @@ mkdir -p ./ORDS/config
 ### Create & Run Express Container to Setup Persistent DB
 Create ```.env``` file containing a ```ORACLE_PWD``` variable and a password (do not use special characters, only numbers, small and caps for compatibility reasons):
 
-```ORACLE_PWD=<password without quotes of any kind>```
+```ORACLE_PWD=<password without quotes of any kind>```, e.g., ```1230321abcABC```.
 
 Then run the following command to
 * create and run the container ```rad-oracle-apex-express```
@@ -83,14 +83,19 @@ Create the file ```conn_string.txt``` in the directory ```./ORDS/variables``` wi
 ```
 CONN_STRING=sys/<ORACLE_PWD>@<express hostname>:1521/XEPDB1
 ```
-Replace ```<ORACLE_PWD>``` with the password from the express container and the ```<hostname>``` with the express container's hostname (```express```), e.g.:
+Replace ```<ORACLE_PWD>``` with the password from the ```.env``` file and the ```<hostname>``` with the express container's hostname (```express```), e.g.:
+
+```
+CONN_STRING=sys/<ORACLE_PWD>@express:1521/XEPDB1
+```
+E.g.,
 ```
 CONN_STRING=sys/1230321abcABC@express:1521/XEPDB1
 ```
 
 Then run the following command to
 * create and run the container ```rad-oracle-apex-ords-temp```
-* install APEX in the DB of the ```express``` DB
+* install APEX in the Express
 
 ```
 docker run \
@@ -123,6 +128,7 @@ curl -o apex.zip https://download.oracle.com/otn_software/apex/apex-latest.zip &
 unzip -q apex.zip
 ```
 #### Set The APEX Directory In The ORDS Container
+
 > [!IMPORTANT]
 > Run the ORDS container once in order to update the config with the installed APEX files:
 > ```
@@ -185,18 +191,67 @@ networks:
     name: rad-oracle-apex
 ```
 
-#### Log Into APEX
-Login:
-
-- Workspace: ```internal```
-- User:      ```ADMIN```
-- Password:  ```Welcome_1```
+#### Log Into APEX Workspace
+1. Go to your instance's APEX homepage, e.g., ```http://<docker-host>```.
+2. Select _Oracle APEX_ (the middle pane)
+3. Login:
+   - Workspace: ```internal```
+   - User:      ```ADMIN```
+   - Password:  ```Welcome_1```
 
 > [!WARNING]
 > If you changed the password during log-in check from running the temporary ORDS-Developer container, use the updated password!
 
+#### [Log Into APEX Administration](https://docs.oracle.com/en/database/oracle/apex/24.1/aeadm/accessing-oracle-application-express-administration-services.html#GUID-C325A307-7047-4FCB-86B7-F7771069F995)
+1. Go to your instance's APEX homepage, e.g., ```http://<docker-host>```.
+2. Select _Oracle APEX_ (the middle pane)
+3. Go to the bottom of the page and select _Administration_ in the _Tasks_ column
+4. Login:
+   - User: ```admin```
+   - Password: The one you changed the default password ```Welcome_1``` to
+
+#### Log Into SQL Developer Web (SDW)
+Well, that's a whole different story:
+##### Enable User Schema For SDW
+First, the [schema of a user has to be enabled for SQL Developer Web](https://docs.oracle.com/en/database/oracle/sql-developer-web/sdwad/accessing-sql-developer-web.html#GUID-63D265FC-7500-4F88-8870-1C60E0A286FF):
+1. Log into the _express_ container's CLI:
+   - To get to the SQL prompt directly: ```docker exec -it oracle-apex-express sqlplus sys/Welcome1##@//localhost:1521/XEPDB1 as sysdba```
+   - Via shell: ```docker exec -it oracle-apex-express sh``` and then enter ```sqlplus sys/Welcome1##@//localhost:1521/XEPDB1 as sysdba``` at the prompt
+2. Now, the following must be entered:
+   ```
+   BEGIN
+    ords_admin.enable_schema(
+     p_enabled => TRUE,
+     p_schema => 'schema-name',
+     p_url_mapping_type => 'BASE_PATH',
+     p_url_mapping_pattern => 'schema-alias',
+     p_auto_rest_auth => NULL
+    );
+    commit;
+   END;
+   ```
+> [!IMPORTANT]
+> - The value of ```p_schema``` (```schema-name```) has to be all upper case!
+> - The value of ```p_url_mapping_pattern``` (```schema-alias```) has to be all lower case!
+   E.g.,
+   ```
+   BEGIN
+    ords_admin.enable_schema(
+     p_enabled => TRUE,
+     p_schema => 'ADMIN',
+     p_url_mapping_type => 'BASE_PATH',
+     p_url_mapping_pattern => 'admin',
+     p_auto_rest_auth => NULL
+    );
+    commit;
+   END;
+   ```
+3. Optional: Verify if user (= value used for ```p_schema```) has been enabled with ```select username from all_users order by username```
+4. Change user password via SQL prompt: ```alter user <user> identified by <password>;``` (replace ```<user```)
+5. Go to ```http(s)://<domain name>/ords/sql-developer``` and log in with the credentials used above
+
 ## Access APEX from WAN with HTTPS / Reverse Proxy
-Put the following 2 lines into ```./ORDS/config/global/settings.xml```, replacing ```<your apex domain, no trailing slash>```:
+Put the following 2 lines into ```./ORDS/config/global/settings.xml```, replacing ```<your apex domain, no trailing slash>``` with your domain's name:
 ```
 <entry key="security.externalSessionTrustedOrigins">http://<your apex domain, no trailing slash>, https://<your apex domain, no trailing slash>:443</entry>
 <entry key="security.forceHTTPS">true</entry>
