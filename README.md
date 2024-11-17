@@ -211,9 +211,7 @@ networks:
    - Password: The one you changed the default password ```Welcome_1``` to
 
 #### Log Into SQL Developer Web (SDW)
-Well, that's a whole different story:
-##### Enable User Schema For SDW
-First, the [schema of a user has to be enabled for SQL Developer Web](https://docs.oracle.com/en/database/oracle/sql-developer-web/sdwad/accessing-sql-developer-web.html#GUID-63D265FC-7500-4F88-8870-1C60E0A286FF):
+Well, that's a whole different story: [_The user schema needs to be enabled for SDW_](https://docs.oracle.com/en/database/oracle/sql-developer-web/sdwad/accessing-sql-developer-web.html#GUID-63D265FC-7500-4F88-8870-1C60E0A286FF) as follows:
 1. Log into the _express_ container's CLI:
    - To get to the SQL prompt directly: ```docker exec -it oracle-apex-express sqlplus sys/Welcome1##@//localhost:1521/XEPDB1 as sysdba```
    - Via shell: ```docker exec -it oracle-apex-express sh``` and then enter ```sqlplus sys/Welcome1##@//localhost:1521/XEPDB1 as sysdba``` at the prompt
