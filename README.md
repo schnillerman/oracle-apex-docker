@@ -228,10 +228,12 @@ Well, that's a whole different story: [_The workspace/database schema needs to b
     );
     commit;
    END;
+   /
    ```
 > [!IMPORTANT]
 > - The value of ```p_schema``` (```schema-name```) has to be all upper case!
 > - The value of ```p_url_mapping_pattern``` (```schema-alias```) has to be all lower case!
+> - [The ```/``` at the end of the statement is important in order to execute the statement](https://www.oreilly.com/library/view/oracle-sqlplus-the/1565925785/apas06.html).
    E.g.,
    ```
    BEGIN
@@ -244,6 +246,7 @@ Well, that's a whole different story: [_The workspace/database schema needs to b
     );
     commit;
    END;
+   /
    ```
 3. Optional: Verify if schema (= value used for ```p_schema```) has been enabled with ```select username from all_users order by username```
 4. Change user password via SQL prompt: ```alter user <user> identified by <password>;``` (replace ```<user```) - every workspace, in the database, is basically a user, hence this step
