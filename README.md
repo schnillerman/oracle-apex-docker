@@ -234,6 +234,7 @@ Well, that's a whole different story: [_The workspace/database schema needs to b
 > - The value of ```p_schema``` (```schema-name```) has to be all upper case!
 > - The value of ```p_url_mapping_pattern``` (```schema-alias```) has to be all lower case!
 > - [The ```/``` at the end of the statement is important in order to execute the statement](https://www.oreilly.com/library/view/oracle-sqlplus-the/1565925785/apas06.html).
+
    E.g.,
    ```
    BEGIN
