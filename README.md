@@ -331,7 +331,3 @@ The complete settings.xml might now look similar to:
   * OpenID Connect with Nextcloud and Keycloak [https://janikvonrotz.ch/2020/10/20/openid-connect-with-nextcloud-and-keycloak/]
 
 [^1]: See also https://docs.oracle.com/en/database/oracle/oracle-database/21/sqpug/slash.html
-
-<!--
-  <meta name="google-site-verification" content="Bmtmc--jMiHnVHP8934DyPhJnAiuX6FoveQ26rO2XD0" />
-  -->
