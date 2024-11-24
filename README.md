@@ -210,7 +210,7 @@ networks:
    - User: ```admin```
    - Password: The one you changed the default password ```Welcome_1``` to
 
-#### Log Into SQL Developer Web (SDW)
+#### SQL Developer Web (SDW): Set Up & Log In
 Well, that's a whole different story: [_The workspace/database schema needs to be enabled for SDW_](https://docs.oracle.com/en/database/oracle/sql-developer-web/sdwad/accessing-sql-developer-web.html#GUID-63D265FC-7500-4F88-8870-1C60E0A286FF) as follows:
 
 1. Log into the _express_ container's CLI:
