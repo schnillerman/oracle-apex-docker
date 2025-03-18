@@ -121,11 +121,17 @@ After successful check, the container can be stopped and removed (```docker stop
 
 ### Finalize Setup
 #### Download & Extract APEX Files
+The APEX ZIP file contains the apex directory as root, so no extra dir has to be created.
+
+If you have unzip:
 ```
-mkdir ./apex && \
-cd ./apex && \
 curl -o apex.zip https://download.oracle.com/otn_software/apex/apex-latest.zip && \
 unzip -q apex.zip
+```
+If you have 7z (e.g., Synology NAS):
+```
+curl -o apex.zip https://download.oracle.com/otn_software/apex/apex-latest.zip && \
+7z x apex.zip
 ```
 #### Set The APEX Directory In The ORDS Container
 
