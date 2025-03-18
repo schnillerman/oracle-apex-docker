@@ -113,7 +113,7 @@ docker logs -f rad-oracle-apex-ords-temp
 ```
 If you don't want to check right now, add the line ```--rm \``` after ```-d \``` in order to remove the temporary container after APEX is installed.
 
-If you want to check, run the command as is, and open ```http://<docker-host>/ords:8181``` to see whether the APEX environment has been installed successfully.
+If you want to check, run the command as is, and open ```http://<docker-host>:8181/ords``` to see whether the APEX environment has been installed successfully.
 
 Login:
 
