@@ -78,6 +78,7 @@ docker logs -f rad-oracle-apex-express
 ```
 > [!NOTE]
 > Note that running the container for the first time (initialization of persistent data) takes a long time - on my Synology DS918+, it took ~2.5hrs.
+
 > [!IMPORTANT]
 > Keep the container running during the installation.
 ### Run Temporary ORDS-Developer Container to Setup/Install APEX in the Express DB
