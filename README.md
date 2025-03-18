@@ -108,7 +108,8 @@ docker run \
     -v $(pwd)/ORDS/config:/etc/ords/config \
 	-v $(pwd)/ORDS/variables:/opt/oracle/variables \
 	-p 8181:8181 \
-    container-registry.oracle.com/database/ords-developer:latest
+    container-registry.oracle.com/database/ords-developer:latest && \
+docker logs -f rad-oracle-apex-ords-temp
 ```
 If you don't want to check right now, add the line ```--rm \``` after ```-d \``` in order to remove the temporary container after APEX is installed.
 
