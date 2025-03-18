@@ -73,7 +73,8 @@ docker run \
   --env-file ./.env \
 	-p 1521:1521 -e ORACLE_PWD=${ORACLE_PWD} \
 	-v $(pwd)/express/oradata/:/opt/oracle/oradata \
-	container-registry.oracle.com/database/express:latest
+	container-registry.oracle.com/database/express:latest && \
+docker logs -f rad-oracle-apex-express
 ```
 > [!NOTE]
 > Note that running the container for the first time (initialization of persistent data) takes a long time - on my Synology DS918+, it took ~2.5hrs.
