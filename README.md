@@ -61,10 +61,12 @@ Create ```.env``` file containing a ```ORACLE_PWD``` variable and a password (do
 ```ORACLE_PWD=<password without quotes of any kind>```, e.g., ```1230321abcABC```.
 
 Then run the following command to
+* create the network ```rad-oracle-apex```
 * create and run the container ```rad-oracle-apex-express```
 * set up a persistent database (stored in ```./express/oradata```)
 
 ```
+docker network create rad-oracle-apex && \
 docker run \
 	-d \
   --name rad-oracle-apex-express \
@@ -143,7 +145,7 @@ curl -o apex.zip https://download.oracle.com/otn_software/apex/apex-latest.zip &
 > ```
 > docker run --rm -it \
 >  -v $(pwd)/ORDS/config:/etc/ords/config: \
->  -v $(pwd)/apex/:/opt/oracle/apex/ \ 
+>  -v $(pwd)/apex/:/opt/oracle/apex/ \
 >  container-registry.oracle.com/database/ords:latest \
 >  config set standalone.static.path /opt/oracle/apex/images
 >  ```
