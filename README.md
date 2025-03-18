@@ -70,7 +70,7 @@ docker run \
   --name rad-oracle-apex-express \
 	--network rad-oracle-apex \
 	--hostname express \
-  --env-file ./.env
+  --env-file ./.env \
 	-p 1521:1521 -e ORACLE_PWD=${ORACLE_PWD} \
 	-v $(pwd)/express/oradata/:/opt/oracle/oradata \
 	container-registry.oracle.com/database/express:latest
