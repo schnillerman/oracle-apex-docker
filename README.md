@@ -95,18 +95,20 @@ CONN_STRING=sys/1230321abcABC@express:1521/XEPDB1
 
 Then run the following command to
 * create and run the container ```rad-oracle-apex-ords-temp```
-* install APEX in the Express
+* install APEX in the Express DB
 
 ```
 docker run \
 	-d \
-	--name rad-oracle-apex-ords \
+	--name rad-oracle-apex-ords-temp \
 	--network rad-oracle-apex \
     -v $(pwd)/ORDS/config:/etc/ords/config \
 	-v $(pwd)/ORDS/variables:/opt/oracle/variables \
 	-p 8181:8181 \
     container-registry.oracle.com/database/ords-developer:latest
 ```
+If you don't want to check right now, add the line ```--rm \``` after ```-d \``` in order to remove the temporary container after APEX is installed.
+
 If you want to check, run the command as is, and open ```http://<docker-host>/ords:8181``` to see whether the APEX environment has been installed successfully.
 
 Login:
@@ -115,9 +117,7 @@ Login:
 - User:      ```ADMIN```
 - Password:  ```Welcome_1```
 
-After successful check, the container can be stopped and removed (```docker stop <container-name> && docker rm <container name>```).
-
-If you don't want to check right now, add the line ```--rm \``` after ```-d \``` in order to remove the temporary container after APEX is installed.
+After successful check, the container can be stopped and removed (```docker stop <container-name> && docker rm <container name>```; e.g. ```docker stop rad-oracle-apex-ords-temp &&  docker rm rad-oracle-apex-ords-temp```).
 
 ### Finalize Setup
 #### Download & Extract APEX Files
