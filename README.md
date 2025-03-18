@@ -151,7 +151,9 @@ curl -o apex.zip https://download.oracle.com/otn_software/apex/apex-latest.zip &
 >  ```
 > Reason: The ords image does not contain the APEX files.
 
-#### Run Docker Compose for APEX
+#### Run APEX with Docker Compose
+> [!IMPORTANT]
+> If you want to run APEX with docker compose, you have to stop and remove all existing containers you created previously.
 ```
 services:
   express: # XE database
