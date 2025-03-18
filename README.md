@@ -117,7 +117,7 @@ Login:
 
 After successful check, the container can be stopped and removed (```docker stop <container-name> && docker rm <container name>```).
 
-If you don't want to check right now, add the line ```--rm`\``` after ```-d \``` in order to remove the temporary container after APEX is installed.
+If you don't want to check right now, add the line ```--rm \``` after ```-d \``` in order to remove the temporary container after APEX is installed.
 
 ### Finalize Setup
 #### Download & Extract APEX Files
