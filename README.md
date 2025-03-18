@@ -138,7 +138,7 @@ curl -o apex.zip https://download.oracle.com/otn_software/apex/apex-latest.zip &
 > [!IMPORTANT]
 > Run the ORDS container once in order to update the config with the installed APEX files:
 > ```
-> docker run --network --rm -it \
+> docker run --rm -it \
 >  -v $(pwd)/ORDS/config:/etc/ords/config: \
 >  -v $(pwd)/apex/:/opt/oracle/apex/ \ 
 >  container-registry.oracle.com/database/ords:latest \
