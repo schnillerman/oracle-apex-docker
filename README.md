@@ -71,7 +71,7 @@ curl -o apex.zip https://download.oracle.com/otn_software/apex/apex-latest.zip &
 The files should now reside in ```./apex```.
 
 ### Create & Run Express Container to Setup Persistent DB
-Create ```.env``` file containing a ```ORACLE_PWD``` variable and a password (do not use special characters, only numbers, small and caps for compatibility reasons):
+Create ```.env``` file containing a ```ORACLE_PWD``` variable and a password (do not use special characters, only numbers, small and caps for compatibility reasons; Oracle recommends that the password entered should be at least 8 characters in length, contain at least 1 uppercase character, 1 lower case character and 1 digit [0-9]. Note that the same password will be used for SYS, SYSTEM and PDBADMIN accounts):
 
 ```ORACLE_PWD=<password without quotes of any kind>```, e.g., ```1230321abcABC```.
 
