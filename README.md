@@ -63,6 +63,7 @@ mkdir -p ./ORDS/variables & \
 mkdir -p ./ORDS/config & \
 chmod -R 777 ./ORDS #TO BE VALIDATED
 ```
+![grafik](https://github.com/user-attachments/assets/f3bcb318-8795-40f3-bb17-a1ecdaa4fff6)
 
 ### Download  & Extract APEX Files
 Download and extract the latest APEX files to the project directory; the APEX ZIP file contains the apex directory as root, so no extra dir has to be created.
