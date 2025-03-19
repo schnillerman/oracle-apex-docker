@@ -54,6 +54,7 @@ Start in the docker project's direcctory.
 #### Express :heavy_check_mark:
 ```
 mkdir -p ./express/oradata & chown -R 54321:54321 ./express/oradata & \
+mkdir -p ./express/cfgtoollogs & chown -R 54321:54321 ./express/cfgtollogs & \
 mkdir -p ./express/scripts/startup & \
 mkdir -p ./express/scripts/setup
 ```
@@ -100,6 +101,7 @@ docker run \
   	--env-file ./.env \
 	-p 1521:1521 -e ORACLE_PWD=${ORACLE_PWD} \
 	-v $(pwd)/express/oradata/:/opt/oracle/oradata \
+	-v $(pwd)/express/cfgtoollogs/:/opt/oracle/cfgtoollogs \
 	-v $(pwd)/apex/:/opt/oracle/oradata/apex \
 	container-registry.oracle.com/database/express:latest && \
 docker logs -f rad-oracle-apex-express
