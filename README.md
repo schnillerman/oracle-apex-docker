@@ -58,6 +58,7 @@ mkdir -p ./express/cfgtoollogs & chown -R 54321:54321 ./express/cfgtollogs & \
 mkdir -p ./express/scripts/startup & \
 mkdir -p ./express/scripts/setup
 ```
+The ```cfgtoollogs```-diretory is for analysis in case of database creation failure (```./cfgtoollogs/dbca/XE/XE.log```).
 #### ORDS
 ```
 mkdir -p ./ORDS/variables & \
