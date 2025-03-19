@@ -93,7 +93,7 @@ Then run the following command to
 * set up a persistent database (stored in ```./express/oradata```)
 
 ```
-docker network create rad-oracle-apex && \
+docker network create rad-oracle-apex & \
 docker run \
 	-d \
   	--name rad-oracle-apex-express \
