@@ -54,7 +54,7 @@ Start in the docker project's direcctory.
 #### Express :heavy_check_mark:
 ```
 mkdir -p ./express/oradata & chown -R 54321:54321 ./express/oradata & \
-mkdir -p ./express/cfgtoollogs & chown -R 54321:54321 ./express/cfgtollogs & \
+mkdir -p ./express/cfgtoollogs & chown -R 54321:54321 ./express/cfgtoollogs & \
 mkdir -p ./express/scripts/startup & \
 mkdir -p ./express/scripts/setup
 ```
