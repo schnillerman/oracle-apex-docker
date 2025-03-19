@@ -51,7 +51,7 @@ Start in the docker project's direcctory.
                   Has to be writable by the Unix "oracle" (uid: 54321) user inside the container.
                   If omitted the database will not be persisted over container recreation.
 ```
-#### Express
+#### Express VALIDATED
 ```
 mkdir -p ./express/oradata & chown -R 54321:54321 ./express/oradata & \
 mkdir -p ./express/scripts/startup & \
