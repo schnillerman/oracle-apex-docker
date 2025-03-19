@@ -55,6 +55,21 @@ mkdir -p ./express/scripts/setup
 mkdir -p ./ORDS/variables && \
 mkdir -p ./ORDS/config
 ```
+#### APEX
+Download the extract APEX files to the project directory; the APEX ZIP file contains the apex directory as root, so no extra dir has to be created.
+
+If you have unzip:
+```
+curl -o apex.zip https://download.oracle.com/otn_software/apex/apex-latest.zip && \
+unzip -q apex.zip
+```
+If you have 7z (e.g., Synology NAS):
+```
+curl -o apex.zip https://download.oracle.com/otn_software/apex/apex-latest.zip && \
+7z x apex.zip
+```
+The files should now reside in ```./apex```.
+
 ### Create & Run Express Container to Setup Persistent DB
 Create ```.env``` file containing a ```ORACLE_PWD``` variable and a password (do not use special characters, only numbers, small and caps for compatibility reasons):
 
@@ -69,12 +84,13 @@ Then run the following command to
 docker network create rad-oracle-apex && \
 docker run \
 	-d \
-  --name rad-oracle-apex-express \
+  	--name rad-oracle-apex-express \
 	--network rad-oracle-apex \
 	--hostname express \
-  --env-file ./.env \
+  	--env-file ./.env \
 	-p 1521:1521 -e ORACLE_PWD=${ORACLE_PWD} \
 	-v $(pwd)/express/oradata/:/opt/oracle/oradata \
+	-v $(pwd)/apex/:/opt/oracle/oradata/apex \
 	container-registry.oracle.com/database/express:latest && \
 docker logs -f rad-oracle-apex-express
 ```
@@ -125,21 +141,15 @@ Log into application **Oracle APEX**:
 After successful check, the container can be stopped and removed (```docker stop <container-name> && docker rm <container name>```; e.g. ```docker stop rad-oracle-apex-ords-temp &&  docker rm rad-oracle-apex-ords-temp```).
 
 ### Finalize Setup
-#### Download & Extract APEX Files
-The APEX ZIP file contains the apex directory as root, so no extra dir has to be created.
+#### Install APEX in the Express DB
+- Create a shell in the express container: ```docker exec -it rad-oracle-apex-express bash```
+- Change to the mounted apex directory: ```cd /opt/oracle/oradata/apex```
+- Start SQL: ```sqlplus /nolog``` (note that unlike described in the [documentation](https://docs.oracle.com/en/database/oracle/apex/24.1/htmig/downloading-installing-apex.html#HTMIG-GUID-7E432C6D-CECC-4977-B183-3C654380F7BF), step 6, instead of ```sql```, ```sqlplus``` is used)
+- Connect to DB: ```connect sys as sysdba```
+- Enter PW (defined in ```.env```-file)
+- Run install script: ```@apexins.sql SYSAUX SYSAUX TEMP /i/```
 
-If you have unzip:
-```
-curl -o apex.zip https://download.oracle.com/otn_software/apex/apex-latest.zip && \
-unzip -q apex.zip
-```
-If you have 7z (e.g., Synology NAS):
-```
-curl -o apex.zip https://download.oracle.com/otn_software/apex/apex-latest.zip && \
-7z x apex.zip
-```
 #### Set The APEX Directory In The ORDS Container
-
 > [!IMPORTANT]
 > Run the ORDS container once in order to update the config with the installed APEX files:
 > ```
@@ -149,11 +159,12 @@ curl -o apex.zip https://download.oracle.com/otn_software/apex/apex-latest.zip &
 >  container-registry.oracle.com/database/ords:latest \
 >  config set standalone.static.path /opt/oracle/apex/images
 >  ```
-> Reason: The ords image does not contain the APEX files.
+> Reason: The ords image does not contain the APEX image files.
 
 #### Run APEX with Docker Compose
 > [!IMPORTANT]
-> If you want to run APEX with docker compose, you have to stop and remove all existing containers you created previously.
+> If you want to run APEX with docker compose, you have to stop and remove all existing containers and the network you created previously:
+> ```docker stop rad-oracle-apex-express && docker stop rad-oracle-apex-ords && (docker remove rad-oracle-apex-express & docker remove rad-oracle-apex-ords) && docker system prune -f```
 ```
 services:
   express: # XE database
@@ -174,6 +185,7 @@ services:
       - ./express/oradata:/opt/oracle/oradata
       - ./express/scripts/setup:/opt/oracle/scripts/setup
       - ./express/scripts/startup:/opt/oracle/scripts/startup
+      - ./apex:/opt/oracle/oradata/apex
     #healthcheck:
     #  #test command below is with grep because in my case, the output of checkDBstatus.sh is always "The Oracle base remains unchanged with value /opt/oracle" which seems to indicate the DB is fine.
     #  test: /opt/oracle/checkDBStatus.sh | grep -q 'remains unchanged'
