@@ -61,7 +61,7 @@ mkdir -p ./express/scripts/setup
 ```
 mkdir -p ./ORDS/variables & \
 mkdir -p ./ORDS/config & \
-chmod -R 777 ./ORDS
+chmod -R 777 ./ORDS #TO BE VALIDATED
 ```
 
 ### Download  & Extract APEX Files
