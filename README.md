@@ -44,19 +44,28 @@ In the case of docker service names, I use only ```express``` and ```ords``` bec
 
 ### Prepare Directories For Persistent Data
 Start in the docker project's direcctory.
+[According to Oracle](https://github.com/oracle/docker-images/blob/main/OracleDatabase/SingleInstance/README.md#running-oracle-database-in-a-container), the following rights have to be applied to the directory ```./express/oradata```:
+```
+-v /opt/oracle/oradata
+                  The data volume to use for the database.
+                  Has to be writable by the Unix "oracle" (uid: 54321) user inside the container.
+                  If omitted the database will not be persisted over container recreation.
+```
 #### Express
 ```
-mkdir -p ./express/oradata && \
-mkdir -p ./express/scripts/startup && \
+mkdir -p ./express/oradata & chown -R 54321:54321 ./express/oradata & \
+mkdir -p ./express/scripts/startup & \
 mkdir -p ./express/scripts/setup
 ```
 #### ORDS
 ```
-mkdir -p ./ORDS/variables && \
-mkdir -p ./ORDS/config
+mkdir -p ./ORDS/variables & \
+mkdir -p ./ORDS/config & \
+chmod -R 777 ./ORDS
 ```
-#### APEX
-Download the extract APEX files to the project directory; the APEX ZIP file contains the apex directory as root, so no extra dir has to be created.
+
+### Download  & Extract APEX Files
+Download and extract the latest APEX files to the project directory; the APEX ZIP file contains the apex directory as root, so no extra dir has to be created.
 
 If you have unzip:
 ```
