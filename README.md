@@ -113,7 +113,7 @@ docker logs -f rad-oracle-apex-express-temp
 > [!IMPORTANT]
 > If the first time fails, a second run with the code above might solve it.
 > 
-> Keep the container running during the installation.
+> Keep the container running for the next steps of the installation (until you start the containers with docker-compose).
 ### Install APEX
 #### Download
 Already done in the preparation steps above.
