@@ -67,7 +67,7 @@ chmod -R 777 ./ORDS #TO BE VALIDATED
 ```
 ![grafik](https://github.com/user-attachments/assets/f3bcb318-8795-40f3-bb17-a1ecdaa4fff6)
 
-### Download  & Extract APEX Files
+### Download  & Extract APEX Files :heavy_check_mark:
 Download and extract the latest APEX files to the project directory; the APEX ZIP file contains the apex directory as root, so no extra dir has to be created.
 
 If you have unzip:
@@ -88,16 +88,16 @@ Create ```.env``` file containing a ```ORACLE_PWD``` variable and a password (do
 ```ORACLE_PWD=<password without quotes of any kind>```, e.g., ```1230321abcABC```.
 
 Then run the following command to
-* create the network ```rad-oracle-apex```
-* create and run the container ```rad-oracle-apex-express```
+* create the network ```rad-oracle-apex-temp```
+* create and run the container ```rad-oracle-apex-express-temp```
 * set up a persistent database (stored in ```./express/oradata```)
 
 ```
-docker network create rad-oracle-apex & \
+docker network create rad-oracle-apex-temp & \
 docker run \
 	-d \
-  	--name rad-oracle-apex-express \
-	--network rad-oracle-apex \
+  	--name rad-oracle-apex-express-temp \
+	--network rad-oracle-apex-temp \
 	--hostname express \
   	--env-file ./.env \
 	-p 1521:1521 -e ORACLE_PWD=${ORACLE_PWD} \
@@ -105,7 +105,7 @@ docker run \
 	-v $(pwd)/express/cfgtoollogs/:/opt/oracle/cfgtoollogs \
 	-v $(pwd)/apex/:/opt/oracle/oradata/apex \
 	container-registry.oracle.com/database/express:latest && \
-docker logs -f rad-oracle-apex-express
+docker logs -f rad-oracle-apex-express-temp
 ```
 > [!NOTE]
 > Note that running the container for the first time (initialization of persistent data) takes a long time - on my Synology DS918+, it took ~2.5hrs.
