@@ -230,7 +230,10 @@ networks:
     name: rad-oracle-apex
 ```
 In case you want to [debug the healthcheck](https://adamtuttle.codes/blog/2021/debugging-docker-health-checks/), use ```docker inspect --format "{{json .State.Health }}" rad-oracle-apex-express | jq```:
+
 ![grafik](https://github.com/user-attachments/assets/cccc255a-23d7-4863-b7bd-a4923e841b1e)
+
+Once the express-container has started up, the exit code changes from 3 over 2 to 0 (0=healthy). 
 
 #### Log Into APEX Workspace
 1. Go to your instance's APEX homepage, e.g., ```http://<docker-host>```.
