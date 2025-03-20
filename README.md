@@ -65,8 +65,6 @@ mkdir -p ./ORDS/variables & \
 mkdir -p ./ORDS/config & \
 chmod -R 777 ./ORDS #TO BE VALIDATED
 ```
-![grafik](https://github.com/user-attachments/assets/f3bcb318-8795-40f3-bb17-a1ecdaa4fff6)
-
 ### Download  & Extract APEX Files :heavy_check_mark:
 Download and extract the latest APEX files to the project directory; the APEX ZIP file contains the apex directory as root, so no extra dir has to be created.
 
@@ -109,7 +107,7 @@ docker logs -f rad-oracle-apex-express-temp
 ```
 > [!NOTE]
 > Note that running the container for the first time (initialization of persistent data) takes a long time - on my Synology DS918+, it took ~2.5hrs.
-
+![grafik](https://github.com/user-attachments/assets/a361d077-5668-437d-8952-cd1feb861594)
 > [!IMPORTANT]
 > If the first time fails, a second run with the code above might solve it.
 > 
