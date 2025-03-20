@@ -112,7 +112,17 @@ docker logs -f rad-oracle-apex-express-temp
 
 > [!IMPORTANT]
 > Keep the container running during the installation.
-### Run Temporary ORDS-Developer Container to Setup/Install APEX in the Express DB
+### Install APEX
+#### Download
+Already done in the preparation steps above.
+#### Install APEX in the Express DB
+- Create a shell in the express container: ```docker exec -it rad-oracle-apex-express bash```
+- Change to the mounted apex directory: ```cd /opt/oracle/oradata/apex```
+- Start SQL: ```sqlplus /nolog``` (note that unlike described in the [documentation](https://docs.oracle.com/en/database/oracle/apex/24.1/htmig/downloading-installing-apex.html#HTMIG-GUID-7E432C6D-CECC-4977-B183-3C654380F7BF), step 6, instead of ```sql```, ```sqlplus``` is used)
+- Connect to DB: ```connect sys as sysdba```
+- Enter PW (defined in ```.env```-file)
+- Run install script: ```@apexins.sql SYSAUX SYSAUX TEMP /i/```
+### Run Temporary ORDS-Developer Container to Setup the Connection to the Express DB
 Create the file ```conn_string.txt``` in the directory ```./ORDS/variables``` with the following content:
 ```
 CONN_STRING=sys/<ORACLE_PWD>@<express hostname>:1521/XEPDB1
@@ -153,16 +163,7 @@ Log into application **Oracle APEX**:
 
 After successful check, the container can be stopped and removed (```docker stop <container-name> && docker rm <container name>```; e.g. ```docker stop rad-oracle-apex-ords-temp &&  docker rm rad-oracle-apex-ords-temp```).
 
-### Finalize Setup
-#### Install APEX in the Express DB
-- Create a shell in the express container: ```docker exec -it rad-oracle-apex-express bash```
-- Change to the mounted apex directory: ```cd /opt/oracle/oradata/apex```
-- Start SQL: ```sqlplus /nolog``` (note that unlike described in the [documentation](https://docs.oracle.com/en/database/oracle/apex/24.1/htmig/downloading-installing-apex.html#HTMIG-GUID-7E432C6D-CECC-4977-B183-3C654380F7BF), step 6, instead of ```sql```, ```sqlplus``` is used)
-- Connect to DB: ```connect sys as sysdba```
-- Enter PW (defined in ```.env```-file)
-- Run install script: ```@apexins.sql SYSAUX SYSAUX TEMP /i/```
-
-#### Set The APEX Directory In The ORDS Container
+### Set The APEX Directory In The ORDS Container
 > [!IMPORTANT]
 > Run the ORDS container once in order to update the config with the installed APEX files:
 > ```
@@ -174,7 +175,7 @@ After successful check, the container can be stopped and removed (```docker stop
 >  ```
 > Reason: The ords image does not contain the APEX image files.
 
-#### Run APEX with Docker Compose
+### Run APEX with Docker Compose
 > [!IMPORTANT]
 > If you want to run APEX with docker compose, you have to stop and remove all existing containers and the network you created previously:
 > ```docker stop rad-oracle-apex-express && docker stop rad-oracle-apex-ords && (docker remove rad-oracle-apex-express & docker remove rad-oracle-apex-ords) && docker system prune -f```
