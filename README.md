@@ -199,13 +199,14 @@ services:
       - ./express/scripts/setup:/opt/oracle/scripts/setup
       - ./express/scripts/startup:/opt/oracle/scripts/startup
       - ./apex:/opt/oracle/oradata/apex
-    #healthcheck:
-    #  #test command below is with grep because in my case, the output of checkDBstatus.sh is always "The Oracle base remains unchanged with value /opt/oracle" which seems to indicate the DB is fine.
-    #  test: /opt/oracle/checkDBStatus.sh | grep -q 'remains unchanged'
-    #  interval: 30s
-    #  timeout: 10s
-    #  retries: 10
-    #  #  start_period: 120s not working on Synology NAS
+    healthcheck:
+      #test command below is with grep because in my case, the output of checkDBstatus.sh is always "The Oracle base remains unchanged with value /opt/oracle" which seems to indicate the DB is fine.
+      #test: /opt/oracle/checkDBStatus.sh | grep -q 'remains unchanged'
+      test: [ "CMD", "/opt/oracle/checkDBStatus.sh"]
+      interval: 30s
+      timeout: 30s
+      retries: 100
+      start_period: 600s
 
   ords:
     #image: container-registry.oracle.com/database/ords-developer:latest
@@ -228,6 +229,8 @@ networks:
   apex:
     name: rad-oracle-apex
 ```
+In case you want to [debug the healthcheck](https://adamtuttle.codes/blog/2021/debugging-docker-health-checks/), use ```docker inspect --format "{{json .State.Health }}" rad-oracle-apex-express | jq```:
+![grafik](https://github.com/user-attachments/assets/cccc255a-23d7-4863-b7bd-a4923e841b1e)
 
 #### Log Into APEX Workspace
 1. Go to your instance's APEX homepage, e.g., ```http://<docker-host>```.
