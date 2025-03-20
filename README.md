@@ -226,7 +226,8 @@ services:
     networks:
       - apex
     ports:
-      - 8080:8080
+    #- 8181:8181 this is for the developer image
+    - 8080:8080
 
 networks:
   apex:
