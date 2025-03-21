@@ -51,20 +51,21 @@ Start in the docker project's direcctory.
                   Has to be writable by the Unix "oracle" (uid: 54321) user inside the container.
                   If omitted the database will not be persisted over container recreation.
 ```
-#### Express
+#### Express :heavy_check_mark:
 ```
 mkdir -p ./express/oradata & chown -R 54321:54321 ./express/oradata & \
+mkdir -p ./express/cfgtoollogs & chown -R 54321:54321 ./express/cfgtoollogs & \
 mkdir -p ./express/scripts/startup & \
 mkdir -p ./express/scripts/setup
 ```
+The ```cfgtoollogs```-diretory is for analysis in case of database creation failure (```./cfgtoollogs/dbca/XE/XE.log```).
 #### ORDS
 ```
 mkdir -p ./ORDS/variables & \
 mkdir -p ./ORDS/config & \
-chmod -R 777 ./ORDS
+chmod -R 777 ./ORDS #TO BE VALIDATED
 ```
-
-### Download  & Extract APEX Files
+### Download  & Extract APEX Files :heavy_check_mark:
 Download and extract the latest APEX files to the project directory; the APEX ZIP file contains the apex directory as root, so no extra dir has to be created.
 
 If you have unzip:
@@ -85,30 +86,45 @@ Create ```.env``` file containing a ```ORACLE_PWD``` variable and a password (do
 ```ORACLE_PWD=<password without quotes of any kind>```, e.g., ```1230321abcABC```.
 
 Then run the following command to
-* create the network ```rad-oracle-apex```
-* create and run the container ```rad-oracle-apex-express```
+* create the network ```rad-oracle-apex-temp```
+* create and run the container ```rad-oracle-apex-express-temp```
 * set up a persistent database (stored in ```./express/oradata```)
 
 ```
-docker network create rad-oracle-apex && \
+docker network create rad-oracle-apex-temp & \
 docker run \
 	-d \
-  	--name rad-oracle-apex-express \
-	--network rad-oracle-apex \
+  	--name rad-oracle-apex-express-temp \
+	--network rad-oracle-apex-temp \
 	--hostname express \
   	--env-file ./.env \
 	-p 1521:1521 -e ORACLE_PWD=${ORACLE_PWD} \
 	-v $(pwd)/express/oradata/:/opt/oracle/oradata \
+	-v $(pwd)/express/cfgtoollogs/:/opt/oracle/cfgtoollogs \
 	-v $(pwd)/apex/:/opt/oracle/oradata/apex \
 	container-registry.oracle.com/database/express:latest && \
-docker logs -f rad-oracle-apex-express
+docker logs -f rad-oracle-apex-express-temp
 ```
 > [!NOTE]
 > Note that running the container for the first time (initialization of persistent data) takes a long time - on my Synology DS918+, it took ~2.5hrs.
 
+![grafik](https://github.com/user-attachments/assets/a361d077-5668-437d-8952-cd1feb861594)
+
 > [!IMPORTANT]
-> Keep the container running during the installation.
-### Run Temporary ORDS-Developer Container to Setup/Install APEX in the Express DB
+> If the first time fails, a second run with the code above might solve it.
+> 
+> Keep the container running for the next steps of the installation (until you start the containers with docker-compose).
+### Install APEX
+#### Download
+Already done in the preparation steps above.
+#### Install APEX in the Express DB
+- Create a shell in the express container: ```docker exec -it rad-oracle-apex-express bash```
+- Change to the mounted apex directory: ```cd /opt/oracle/oradata/apex```
+- Start SQL: ```sqlplus /nolog``` (note that unlike described in the [documentation](https://docs.oracle.com/en/database/oracle/apex/24.1/htmig/downloading-installing-apex.html#HTMIG-GUID-7E432C6D-CECC-4977-B183-3C654380F7BF), step 6, instead of ```sql```, ```sqlplus``` is used)
+- Connect to DB: ```connect sys as sysdba```
+- Enter PW (defined in ```.env```-file)
+- Run install script: ```@apexins.sql SYSAUX SYSAUX TEMP /i/```
+### Run Temporary ORDS-Developer Container to Setup the Connection to the Express DB
 Create the file ```conn_string.txt``` in the directory ```./ORDS/variables``` with the following content:
 ```
 CONN_STRING=sys/<ORACLE_PWD>@<express hostname>:1521/XEPDB1
@@ -170,7 +186,7 @@ After successful check, the container can be stopped and removed (```docker stop
 >  ```
 > Reason: The ords image does not contain the APEX image files.
 
-#### Run APEX with Docker Compose
+### Run APEX with Docker Compose
 > [!IMPORTANT]
 > If you want to run APEX with docker compose, you have to stop and remove all existing containers and the network you created previously:
 > ```docker stop rad-oracle-apex-express && docker stop rad-oracle-apex-ords && (docker remove rad-oracle-apex-express & docker remove rad-oracle-apex-ords) && docker system prune -f```
@@ -195,13 +211,14 @@ services:
       - ./express/scripts/setup:/opt/oracle/scripts/setup
       - ./express/scripts/startup:/opt/oracle/scripts/startup
       - ./apex:/opt/oracle/oradata/apex
-    #healthcheck:
-    #  #test command below is with grep because in my case, the output of checkDBstatus.sh is always "The Oracle base remains unchanged with value /opt/oracle" which seems to indicate the DB is fine.
-    #  test: /opt/oracle/checkDBStatus.sh | grep -q 'remains unchanged'
-    #  interval: 30s
-    #  timeout: 10s
-    #  retries: 10
-    #  #  start_period: 120s not working on Synology NAS
+    healthcheck:
+      #test command below is with grep because in my case, the output of checkDBstatus.sh is always "The Oracle base remains unchanged with value /opt/oracle" which seems to indicate the DB is fine.
+      #test: /opt/oracle/checkDBStatus.sh | grep -q 'remains unchanged'
+      test: [ "CMD", "/opt/oracle/checkDBStatus.sh"]
+      interval: 30s
+      timeout: 30s
+      retries: 100
+      start_period: 600s
 
   ords:
     #image: container-registry.oracle.com/database/ords-developer:latest
@@ -218,12 +235,18 @@ services:
     networks:
       - apex
     ports:
-      - 8080:8080
+    #- 8181:8181 this is for the developer image
+    - 8080:8080
 
 networks:
   apex:
     name: rad-oracle-apex
 ```
+In case you want to [debug the healthcheck](https://adamtuttle.codes/blog/2021/debugging-docker-health-checks/), use ```docker inspect --format "{{json .State.Health }}" rad-oracle-apex-express | jq```:
+
+![grafik](https://github.com/user-attachments/assets/cccc255a-23d7-4863-b7bd-a4923e841b1e)
+
+Once the express-container has started up, the exit code changes from 3 over 2 to 0 (0=healthy). 
 
 #### Log Into APEX Workspace
 1. Go to your instance's APEX homepage, e.g., ```http://<docker-host>```.
