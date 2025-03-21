@@ -165,7 +165,16 @@ Log into application **Oracle APEX**:
 
 After successful check, the container can be stopped and removed (```docker stop <container-name> && docker rm <container name>```; e.g. ```docker stop rad-oracle-apex-ords-temp &&  docker rm rad-oracle-apex-ords-temp```).
 
-### Set The APEX Directory In The ORDS Container
+### Finalize Setup
+#### Install APEX in the Express DB
+- Create a shell in the express container: ```docker exec -it rad-oracle-apex-express bash```
+- Change to the mounted apex directory: ```cd /opt/oracle/oradata/apex```
+- Start SQL: ```sqlplus /nolog``` (note that unlike described in the [documentation](https://docs.oracle.com/en/database/oracle/apex/24.1/htmig/downloading-installing-apex.html#HTMIG-GUID-7E432C6D-CECC-4977-B183-3C654380F7BF), step 6, instead of ```sql```, ```sqlplus``` is used)
+- Connect to DB _XEPDB1_: ```connect sys@XEPDB1 as sysdba```
+- Enter PW (defined in ```.env```-file)
+- Run install script: ```@apexins.sql SYSAUX SYSAUX TEMP /i/```
+
+#### Set The APEX Directory In The ORDS Container
 > [!IMPORTANT]
 > Run the ORDS container once in order to update the config with the installed APEX files:
 > ```
