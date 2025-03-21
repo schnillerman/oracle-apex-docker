@@ -335,7 +335,14 @@ The complete settings.xml might now look similar to:
 <entry key="security.forceHTTPS">true</entry>
 </properties>
 ```
-
+## Update APEX
+- Perform all steps described in ### Install APEX
+- Stay connected to DB in sqlplus
+- Delete old schema
+  - Enter ```select username from dba_users;```
+  - Identify old schema (starts with ```APEX_``` and the old version ID, e.g. ```APEX_240100```) as opposed to new schma (same user name with a higher version ID)
+  - Enter ```drop user <user name> cascade;```, e.g. ```drop user APEX_240100 cascade;```
+  - If an error message is returned (e.g., ```ORA-28014: cannot drop administrative user or role```), enter ```alter session set "_oracle_script"=TRUE;```and repeat the previous command
 ## Docker Installation Sources
 ### Sources used for new attempt
 * Oracle:
