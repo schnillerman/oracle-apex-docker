@@ -120,10 +120,15 @@ Already done in the preparation steps above.
 #### Install APEX in the Express DB
 - Create a shell in the express container: ```docker exec -it rad-oracle-apex-express bash```
 - Change to the mounted apex directory: ```cd /opt/oracle/oradata/apex```
-- Start SQL: ```sqlplus /nolog``` (note that unlike described in the [documentation](https://docs.oracle.com/en/database/oracle/apex/24.1/htmig/downloading-installing-apex.html#HTMIG-GUID-7E432C6D-CECC-4977-B183-3C654380F7BF), step 6, instead of ```sql```, ```sqlplus``` is used)
-- Connect to DB: ```connect sys as sysdba```
-- Enter PW (defined in ```.env```-file)
+- Connect to the DB _XEPDB1_:
+  - In separate steps:
+    - Start SQL: ```sqlplus /nolog``` (note that unlike described in the [documentation](https://docs.oracle.com/en/database/oracle/apex/24.1/htmig/downloading-installing-apex.html#HTMIG-GUID-7E432C6D-CECC-4977-B183-3C654380F7BF), step 6, instead of ```sql```, ```sqlplus``` is used)
+    - Connect to DB _XEPDB1_:
+      - With extra PW prompt: ```CONNECT SYS@<express hostname>:1521/XEPDB1 as SYSDBA```; enter PW (defined in ```.env```-file)
+      - With PW in command: ```CONNECT SYS/<ORACLE_PWD>@<express hostname>:1521/XEPDB1 as SYSDBA```
+  - [In single step](https://docs.oracle.com/en/database/oracle/oracle-database/21/xeinl/connecting-oracle-database-free.html): Use the same string as for the CONN_STRING file (later, below): sqlplus /nolog sys/<ORACLE_PWD>@<express hostname>:1521/XEPDB1 AS SYSDBA
 - Run install script: ```@apexins.sql SYSAUX SYSAUX TEMP /i/```
+
 ### Run Temporary ORDS-Developer Container to Setup the Connection to the Express DB
 Create the file ```conn_string.txt``` in the directory ```./ORDS/variables``` with the following content:
 ```
@@ -165,16 +170,7 @@ Log into application **Oracle APEX**:
 
 After successful check, the container can be stopped and removed (```docker stop <container-name> && docker rm <container name>```; e.g. ```docker stop rad-oracle-apex-ords-temp &&  docker rm rad-oracle-apex-ords-temp```).
 
-### Finalize Setup
-#### Install APEX in the Express DB
-- Create a shell in the express container: ```docker exec -it rad-oracle-apex-express bash```
-- Change to the mounted apex directory: ```cd /opt/oracle/oradata/apex```
-- Start SQL: ```sqlplus /nolog``` (note that unlike described in the [documentation](https://docs.oracle.com/en/database/oracle/apex/24.1/htmig/downloading-installing-apex.html#HTMIG-GUID-7E432C6D-CECC-4977-B183-3C654380F7BF), step 6, instead of ```sql```, ```sqlplus``` is used)
-- Connect to DB _XEPDB1_: ```connect sys@XEPDB1 as sysdba```
-- Enter PW (defined in ```.env```-file)
-- Run install script: ```@apexins.sql SYSAUX SYSAUX TEMP /i/```
-
-#### Set The APEX Directory In The ORDS Container
+### Set The APEX Directory In The ORDS Container
 > [!IMPORTANT]
 > Run the ORDS container once in order to update the config with the installed APEX files:
 > ```
