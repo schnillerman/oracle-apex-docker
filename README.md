@@ -53,16 +53,16 @@ Start in the docker project's direcctory.
 ```
 #### Express :heavy_check_mark:
 ```
-mkdir -p ./express/oradata & chown -R 54321:54321 ./express/oradata & \
-mkdir -p ./express/cfgtoollogs & chown -R 54321:54321 ./express/cfgtoollogs & \
+(mkdir -p ./express/oradata && chown -R 54321:54321 ./express/oradata) & \
+(mkdir -p ./express/cfgtoollogs && chown -R 54321:54321 ./express/cfgtoollogs) & \
 mkdir -p ./express/scripts/startup & \
 mkdir -p ./express/scripts/setup
 ```
 The ```cfgtoollogs```-diretory is for analysis in case of database creation failure (```./cfgtoollogs/dbca/XE/XE.log```).
 #### ORDS
 ```
-mkdir -p ./ORDS/variables & \
-mkdir -p ./ORDS/config & \
+mkdir -p ./ORDS/variables && \
+mkdir -p ./ORDS/config && \
 chmod -R 777 ./ORDS #TO BE VALIDATED
 ```
 ### Download  & Extract APEX Files :heavy_check_mark:
