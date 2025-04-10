@@ -80,7 +80,7 @@ curl -o apex.zip https://download.oracle.com/otn_software/apex/apex-latest.zip &
 ```
 The files should now reside in ```./apex```.
 
-### Create & Run Express Container to Setup Persistent DB :heavy_check_mark:
+### Create & Run Temporary Express Container to Setup Persistent DB :heavy_check_mark:
 Create ```.env``` file containing a ```ORACLE_PWD``` variable and a password (do not use special characters, only numbers, small and caps for compatibility reasons; Oracle recommends that the password entered should be at least 8 characters in length, contain at least 1 uppercase character, 1 lower case character and 1 digit [0-9]. Note that the same password will be used for SYS, SYSTEM and PDBADMIN accounts):
 
 ```ORACLE_PWD=<password without quotes of any kind>```, e.g., ```1230321abcABC```.
@@ -118,7 +118,7 @@ docker logs -f rad-oracle-apex-express-temp
 #### Download
 Already done in the preparation steps above.
 #### Install APEX in the Express DB
-- Create a shell in the express container: ```docker exec -it rad-oracle-apex-express bash```
+- Create a shell in the express container: ```docker exec -it rad-oracle-apex-express-temp bash```
 - Change to the mounted apex directory: ```cd /opt/oracle/oradata/apex```
 - [Connect to the DB _XEPDB1_](https://container-registry.oracle.com/ords/ocr/ba/database/express):
   - In separate steps:
@@ -145,7 +145,7 @@ CONN_STRING=sys/1230321abcABC@express:1521/XEPDB1
 ```
 
 Then run the following command to
-* create and run the container ```rad-oracle-apex-ords-temp```
+* create and run the temporary ORDS container ```rad-oracle-apex-ords-temp```
 * connect the ORDS container to the Express DB
 
 ```
