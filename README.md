@@ -42,7 +42,7 @@ In this context, ```rad``` is short for _**R**apid **A**pplication **D**evelopme
 
 In the case of docker service names, I use only ```express``` and ```ords``` because those service names are referred to only within the compose file.
 
-### Prepare Directories For Persistent Data
+### Prepare Directories For Persistent Data :heavy_check_mark:
 Start in the docker project's direcctory.
 [According to Oracle](https://github.com/oracle/docker-images/blob/main/OracleDatabase/SingleInstance/README.md#running-oracle-database-in-a-container), the following rights have to be applied to the directory ```./express/oradata```:
 ```
@@ -59,7 +59,7 @@ mkdir -p ./express/scripts/startup & \
 mkdir -p ./express/scripts/setup
 ```
 The ```cfgtoollogs```-diretory is for analysis in case of database creation failure (```./cfgtoollogs/dbca/XE/XE.log```).
-#### ORDS
+#### ORDS :heavy_check_mark:
 ```
 mkdir -p ./ORDS/variables && \
 mkdir -p ./ORDS/config && \
@@ -68,19 +68,19 @@ chmod -R 777 ./ORDS #TO BE VALIDATED
 ### Download  & Extract APEX Files :heavy_check_mark:
 Download and extract the latest APEX files to the project directory; the APEX ZIP file contains the apex directory as root, so no extra dir has to be created.
 
-If you have unzip:
+If you have unzip: :heavy_check_mark:
 ```
 curl -o apex.zip https://download.oracle.com/otn_software/apex/apex-latest.zip && \
 unzip -q apex.zip
 ```
-If you have 7z (e.g., Synology NAS):
+If you have 7z (e.g., Synology NAS): :heavy_check_mark:
 ```
 curl -o apex.zip https://download.oracle.com/otn_software/apex/apex-latest.zip && \
 7z x apex.zip
 ```
 The files should now reside in ```./apex```.
 
-### Create & Run Express Container to Setup Persistent DB
+### Create & Run Express Container to Setup Persistent DB :heavy_check_mark:
 Create ```.env``` file containing a ```ORACLE_PWD``` variable and a password (do not use special characters, only numbers, small and caps for compatibility reasons; Oracle recommends that the password entered should be at least 8 characters in length, contain at least 1 uppercase character, 1 lower case character and 1 digit [0-9]. Note that the same password will be used for SYS, SYSTEM and PDBADMIN accounts):
 
 ```ORACLE_PWD=<password without quotes of any kind>```, e.g., ```1230321abcABC```.
