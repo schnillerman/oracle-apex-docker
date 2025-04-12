@@ -122,7 +122,7 @@ Already done in the preparation steps above.
 - Change to the mounted apex directory: ```cd /opt/oracle/oradata/apex```
 - [Connect to the DB _XEPDB1_](https://container-registry.oracle.com/ords/ocr/ba/database/express):
   - In separate steps:
-    - Start SQL: ```sqlplus /nolog``` (note that unlike described in the [documentation](https://docs.oracle.com/en/database/oracle/apex/24.1/htmig/downloading-installing-apex.html#HTMIG-GUID-7E432C6D-CECC-4977-B183-3C654380F7BF), step 6, instead of ```sql```, ```sqlplus``` is used)
+    - Start SQL: ```sqlplus /nolog``` (note that unlike described in the [documentation](https://docs.oracle.com/en/database/oracle/apex/24.1/htmig/downloading-installing-apex.html#HTMIG-GUID-7E432C6D-CECC-4977-B183-3C654380F7BF), steps 4 and 6, instead of ```sql```, ```sqlplus``` is used)
     - Connect to DB _XEPDB1_:
       - With extra PW prompt: ```CONNECT SYS@<express hostname>:1521/XEPDB1 as SYSDBA```; enter PW (defined in ```.env```-file)
       - With PW in command: ```CONNECT SYS/<ORACLE_PWD>@<express hostname>:1521/XEPDB1 as SYSDBA```
