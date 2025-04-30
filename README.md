@@ -53,18 +53,18 @@ Start in the docker project's direcctory.
 ```
 #### Express :heavy_check_mark:
 ```
-(mkdir -p ./express/oradata && chown -R 54321:54321 ./express/oradata) & \
-(mkdir -p ./express/cfgtoollogs && chown -R 54321:54321 ./express/cfgtoollogs) & \
-mkdir -p ./express/scripts/startup & \
-mkdir -p ./express/scripts/setup
+sudo bash -c '
+  mkdir -p ./express/{oradata,cfgtoollogs,scripts/startup,scripts/setup} && 
+  chown -R 54321:54321 ./express/{oradata,cfgtoollogs}
+'
 ```
 The ```cfgtoollogs```-diretory is for analysis in case of database creation failure (```./cfgtoollogs/dbca/XE/XE.log```).
 #### ORDS :heavy_check_mark:
 ```
-mkdir -p ./ORDS/variables && \
-mkdir -p ./ORDS/config && \
-chmod -R 777 ./ORDS #TO BE VALIDATED
+sudo bash -c 'mkdir -p ./ORDS/{variables,config}'
 ```
+`chmod -R 777 ./ORDS` **TO BE VALIDATED**
+
 ### Download  & Extract APEX Files :heavy_check_mark:
 Download and extract the latest APEX files to the project directory; the APEX ZIP file contains the apex directory as root, so no extra dir has to be created.
 
@@ -98,7 +98,7 @@ docker run \
 	--network rad-oracle-apex-temp \
 	--hostname express \
   	--env-file ./.env \
-	-p 1521:1521 -e ORACLE_PWD=${ORACLE_PWD} \
+	-p 1521:1521 \ #-e ORACLE_PWD=${ORACLE_PWD} \
 	-v $(pwd)/express/oradata/:/opt/oracle/oradata \
 	-v $(pwd)/express/cfgtoollogs/:/opt/oracle/cfgtoollogs \
 	-v $(pwd)/apex/:/opt/oracle/oradata/apex \
@@ -106,7 +106,9 @@ docker run \
 docker logs -f rad-oracle-apex-express-temp
 ```
 > [!NOTE]
-> Note that running the container for the first time (initialization of persistent data) takes a long time - on my Synology DS918+, it took ~2.5hrs.
+> - Note that
+>   - -e ORACLE_PWD=${ORACLE_PWD} is commented out because the password is defined in the .env file
+>   - running the container for the first time (initialization of persistent data) takes a long time - on my Synology DS918+, it took ~2.5hrs.
 
 ![grafik](https://github.com/user-attachments/assets/a361d077-5668-437d-8952-cd1feb861594)
 
