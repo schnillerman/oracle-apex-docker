@@ -129,7 +129,7 @@ Already done in the preparation steps above.
     - Connect to DB _XEPDB1_:
       - With extra PW prompt: ```CONNECT SYS@<express hostname>:1521/XEPDB1 as SYSDBA```; enter PW (defined in ```.env```-file)
       - With PW in command: ```CONNECT SYS/<ORACLE_PWD>@<express hostname>:1521/XEPDB1 as SYSDBA```
-- [In single step](https://docs.oracle.com/en/database/oracle/oracle-database/21/xeinl/connecting-oracle-database-free.html): ```cd /opt/oracle/oradata/apex && sqlplus sys/${ORACLE_PWD}@<express hostname>:1521/XEPDB1 AS SYSDBA```, e.g., ```sqlplus sys/${ORACLE_PWD}@express:1521/XEPDB1 AS SYSDBA``` (note that `${ORACLE_PWD}` does not have to be replaced here since taken from the environment variable in this case; also, this will be used for the CONN_STRING file below, but there, ORACLE_PWD needs to be explicit)
+- [In single step](https://docs.oracle.com/en/database/oracle/oracle-database/21/xeinl/connecting-oracle-database-free.html): ```cd /opt/oracle/oradata/apex && sqlplus sys/${ORACLE_PWD}@<express hostname>:1521/XEPDB1 AS SYSDBA```, e.g., ```cd /opt/oracle/oradata/apex && sqlplus sys/${ORACLE_PWD}@express:1521/XEPDB1 AS SYSDBA``` (note that `${ORACLE_PWD}` does not have to be replaced here since taken from the environment variable in this case; also, this will be used for the CONN_STRING file below, but there, ORACLE_PWD needs to be explicit)
 - Run install script: ```@apexins.sql SYSAUX SYSAUX TEMP /i/```
 
 ### Run Temporary ORDS-Developer Container to Setup the Connection to the Express DB
