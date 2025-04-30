@@ -117,10 +117,12 @@ docker logs -f rad-oracle-apex-express-temp
 > If the first time fails, a second run with the code above might solve it.
 > 
 > Keep the container running for the next steps of the installation (until you start the containers with docker-compose).
-### Install APEX
-#### Download
+
+### Install APEX :heavy_check_mark:
+
+#### Download :heavy_check_mark:
 Already done in the preparation steps above.
-#### Install APEX in the Express DB
+#### Install APEX in the Express DB :heavy_check_mark:
 - Create a shell in the express container: ```docker exec -it rad-oracle-apex-express-temp bash```
 - Change to the mounted apex directory: ```cd /opt/oracle/oradata/apex```
 - [Connect to the DB _XEPDB1_](https://container-registry.oracle.com/ords/ocr/ba/database/express):
