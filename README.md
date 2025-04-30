@@ -91,18 +91,19 @@ Then run the following command to
 * set up a persistent database (stored in ```./express/oradata```)
 
 ```
-docker network create rad-oracle-apex-temp & \
+docker network create rad-oracle-apex-temp && \
 docker run \
-	-d \
-  	--name rad-oracle-apex-express-temp \
-	--network rad-oracle-apex-temp \
-	--hostname express \
-  	--env-file ./.env \
-	-p 1521:1521 \ #-e ORACLE_PWD=${ORACLE_PWD} \
-	-v $(pwd)/express/oradata/:/opt/oracle/oradata \
-	-v $(pwd)/express/cfgtoollogs/:/opt/oracle/cfgtoollogs \
-	-v $(pwd)/apex/:/opt/oracle/oradata/apex \
-	container-registry.oracle.com/database/express:latest && \
+    -d \
+    --name rad-oracle-apex-express-temp \
+    --network rad-oracle-apex-temp \
+    --hostname express \
+    --env-file ./.env \
+    -p 1521:1521 \
+    # -e ORACLE_PWD=${ORACLE_PWD}  # taken from original documentation but redundant with .env file, therefore deactivated
+    -v "$(pwd)/express/oradata/:/opt/oracle/oradata" \
+    -v "$(pwd)/express/cfgtoollogs/:/opt/oracle/cfgtoollogs" \
+    -v "$(pwd)/apex/:/opt/oracle/oradata/apex" \
+    container-registry.oracle.com/database/express:latest && \
 docker logs -f rad-oracle-apex-express-temp
 ```
 > [!NOTE]
