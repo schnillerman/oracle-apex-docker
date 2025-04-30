@@ -99,7 +99,6 @@ docker run \
     --hostname express \
     --env-file ./.env \
     -p 1521:1521 \
-    # -e ORACLE_PWD=${ORACLE_PWD}  # taken from original documentation but redundant with .env file, therefore deactivated
     -v "$(pwd)/express/oradata/:/opt/oracle/oradata" \
     -v "$(pwd)/express/cfgtoollogs/:/opt/oracle/cfgtoollogs" \
     -v "$(pwd)/apex/:/opt/oracle/oradata/apex" \
