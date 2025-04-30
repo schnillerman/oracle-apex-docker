@@ -138,7 +138,7 @@ Already done in the preparation steps above.
   - `exit` the container's bash
 
 ### Run Temporary ORDS-Developer Container to Setup the Connection to the Express DB
-Create the file ```conn_string.txt``` in the directory ```./ORDS/variables``` with the following content:
+Create the file ```conn_string.txt``` in the directory ```./ORDS/variables``` with the command `sudo nano ./ORDS/variables/conn_string.txt` and the following content:
 
 ```
 CONN_STRING=sys/<ORACLE_PWD>@<express hostname>:1521/XEPDB1
