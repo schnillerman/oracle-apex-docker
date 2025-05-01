@@ -107,7 +107,8 @@ nohup docker pull container-registry.oracle.com/database/ords:latest &
 Create ```.env``` file containing a ```ORACLE_PWD``` variable and a password (do not use special characters, only numbers, small and caps for compatibility reasons; Oracle recommends that the password entered should be at least 8 characters in length, contain at least 1 uppercase character, 1 lower case character and 1 digit [0-9]. Note that the same password will be used for SYS, SYSTEM and PDBADMIN accounts):
 
 ```ORACLE_PWD=<password without quotes of any kind>```, e.g., ```1230321abcABC```.
-Script:
+
+Script: :heavy_check_mark::heavy_check_mark:
 ```
 #!/bin/bash
 
@@ -120,7 +121,7 @@ echo "ORACLE_PWD=$ORACLE_PWD" > ./.env
 echo "Password has been written to ./.env"
 ```
 
-Then run the following command to
+Then run the following command to :heavy_check_mark::heavy_check_mark:
 * create the network ```rad-oracle-apex-temp```
 * create and run the container ```rad-oracle-apex-express-temp```
 * set up a persistent database (stored in ```./express/oradata```)
