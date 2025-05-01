@@ -127,7 +127,7 @@ Then run the following command to :heavy_check_mark::heavy_check_mark:
 * set up a persistent database (stored in ```./express/oradata```)
 
 ```
-docker network create rad-oracle-apex-temp && \
+docker network create rad-oracle-apex-temp & \
 docker run \
     -d \
     --name rad-oracle-apex-express-temp \
