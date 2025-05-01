@@ -192,7 +192,7 @@ Already done in the preparation steps above.
 >     --network rad-oracle-apex-temp \
 >     --name ords_new \
 >     -v ./ORDS/config:/etc/ords/config \
->     -v ./apex/:/opt/oracle/oradata/apex \
+>     -v ./apex/:/opt/oracle/apex \
 >     container-registry.oracle.com/database/ords:latest \
 >     install \
 >       --admin-user SYS \
@@ -203,6 +203,8 @@ Already done in the preparation steps above.
 >       --password-stdin < ./.password
 >   ```
 > Double-check if the network name is correct (must be same as for the Express temporary container).
+>
+> ![grafik](https://github.com/user-attachments/assets/29f783fa-dc4e-4eeb-8c58-cc08de17cd18)
 
 #### Deprecated since ORDS v25 (apparently) :construction_worker:
 > [!NOTE]
@@ -247,9 +249,31 @@ Log into application **Oracle APEX**:
 
 After successful check, the container can be stopped and removed (```docker stop <container-name> && docker rm <container name>```; e.g. ```docker stop rad-oracle-apex-ords-temp &&  docker rm rad-oracle-apex-ords-temp```).
 
-### Set The APEX Directory In The ORDS Container :construction_worker:
+### Set The APEX Directory In The ORDS Container :heavy_check_mark::heavy_check_mark:
 
-This might not be necessary with [ORDS v25](https://container-registry.oracle.com/ords/ocr/ba/database/ords) - TBC!
+This is different with [ORDS v25](https://container-registry.oracle.com/ords/ocr/ba/database/ords).
+
+Run the ORDS container as follows in order to update the config with the APEX images folder location:
+
+```
+docker run -d \
+  --rm
+  --network rad-oracle-apex-temp \
+  --name ords_new \
+  -v ./ORDS/config:/etc/ords/config \
+  -v ./apex/:/opt/oracle/apex \
+  container-registry.oracle.com/database/ords:latest && \
+docker logs -f ords_new
+```
+
+![grafik](https://github.com/user-attachments/assets/d19fccd1-b0d1-4552-9ddc-5c9b801b153b)
+
+Once the folder has been set, stop the container.
+
+> [!NOTE]
+> This might not even be necessary since the same volume is connected later in the docker-compose file for the final ORDS container.
+
+#### Deprecated :construction_worker:
 
 > [!IMPORTANT]
 > Run the ORDS container once in order to update the config with the installed APEX files:
@@ -295,7 +319,7 @@ services:
       - ./express/oradata:/opt/oracle/oradata
       - ./express/scripts/setup:/opt/oracle/scripts/setup
       - ./express/scripts/startup:/opt/oracle/scripts/startup
-      - ./apex:/opt/oracle/oradata/apex
+      - ./apex:/opt/oracle/apex
     healthcheck:
       #test command below is with grep because in my case, the output of checkDBstatus.sh is always "The Oracle base remains unchanged with value /opt/oracle" which seems to indicate the DB is fine.
       #test: /opt/oracle/checkDBStatus.sh | grep -q 'remains unchanged'
