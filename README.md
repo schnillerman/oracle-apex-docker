@@ -295,7 +295,7 @@ Once the folder has been set, stop the container.
 docker rm -f rad-oracle-apex-{ords-temp,express-temp}
 ```
 
-### Run APEX with Docker Compose
+### Run APEX with Docker Compose :construction_worker:
 > [!WARNING]
 > There is still some stuff to document here without using the ORDS developer image.
 > - First login after starting docker-compose showed APEX unavailable.
@@ -309,6 +309,7 @@ docker rm -f rad-oracle-apex-{ords-temp,express-temp}
 >     COLUMN username FORMAT A32
 >     COLUMN account_status FORMAT A32
 >     select username, account_status from dba_users where username like 'APEX%' or username like 'ORDS%';
+> **As a consequence, I guess some more [steps of the official documentation](https://docs.oracle.com/en/database/oracle/apex/24.2/htmig/downloading-installing-apex.html#HTMIG-GUID-4062E1F0-2772-48FC-A4AA-436F326CF751) must be performed as well**
 
 
 > [!IMPORTANT]
