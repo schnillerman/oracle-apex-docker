@@ -296,6 +296,21 @@ docker rm -f rad-oracle-apex-{ords-temp,express-temp}
 ```
 
 ### Run APEX with Docker Compose
+> [!WARNING]
+> There is still some stuff to document here without using the ORDS developer image.
+> - First login after starting docker-compose showed APEX unavailable.
+> - After docker-compose down/up, for some reason, it worked, but APEX_PUBLIC_USER account was locked and [had to be unlocked](https://docs.oracle.com/en/database/oracle/apex/24.2/htmig/downloading-installing-apex.html#GUID-0619448A-56FB-43E1-A479-C45EC5002E4B):
+>   - bash into the Express container:
+>     ```
+>     sqlplus sys/${ORACLE_PWD}@express:1521/XEPDB1 AS SYSDBA
+>     ```
+>   - [list locked accounts](https://mattmulvaney.hashnode.dev/unexpiring-the-ordspublicuser-user-for-apex):
+>     ```
+>     COLUMN username FORMAT A32
+>     COLUMN account_status FORMAT A32
+>     select username, account_status from dba_users where username like 'APEX%' or username like 'ORDS%';
+
+
 > [!IMPORTANT]
 > If you want to run APEX with docker compose, you have to stop and remove all existing containers and the network you created previously:
 > ```docker stop rad-oracle-apex-express && docker stop rad-oracle-apex-ords && (docker remove rad-oracle-apex-express & docker remove rad-oracle-apex-ords) && docker system prune -f```
