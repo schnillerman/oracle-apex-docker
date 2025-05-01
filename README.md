@@ -51,7 +51,7 @@ Start in the docker project's direcctory.
                   Has to be writable by the Unix "oracle" (uid: 54321) user inside the container.
                   If omitted the database will not be persisted over container recreation.
 ```
-#### Express :heavy_check_mark:
+#### Express :heavy_check_mark::heavy_check_mark:
 ```
 sudo bash -c '
   mkdir -p ./express/{oradata,cfgtoollogs,scripts/startup,scripts/setup} && 
@@ -59,28 +59,51 @@ sudo bash -c '
 '
 ```
 The ```cfgtoollogs```-diretory is for analysis in case of database creation failure (```./cfgtoollogs/dbca/XE/XE.log```).
+
 #### ORDS :heavy_check_mark:
 ```
-sudo bash -c 'mkdir -p ./ORDS/{variables,config}'
+sudo bash -c '
+  mkdir -p ./ORDS/{variables,config} &&
+  chown -R 54321:54321 ./ORDS/{config,variables} &&
+  chmod -R 777 ./ORDS/config
+'
 ```
-`chmod -R 777 ./ORDS` **TO BE VALIDATED**
 
-### Download  & Extract APEX Files :heavy_check_mark:
+### Download  & Extract APEX Files :heavy_check_mark::heavy_check_mark:
 Download and extract the latest APEX files to the project directory; the APEX ZIP file contains the apex directory as root, so no extra dir has to be created.
 
-If you have unzip: :heavy_check_mark:
+If you have unzip: :heavy_check_mark::heavy_check_mark:
 ```
 curl -o apex.zip https://download.oracle.com/otn_software/apex/apex-latest.zip && \
 unzip -q apex.zip
 ```
-If you have 7z (e.g., Synology NAS): :heavy_check_mark:
+If you have 7z (e.g., Synology NAS): :heavy_check_mark::heavy_check_mark:
 ```
 curl -o apex.zip https://download.oracle.com/otn_software/apex/apex-latest.zip && \
 7z x apex.zip
 ```
 The files should now reside in ```./apex```.
 
-### Create & Run Temporary Express Container to Setup Persistent DB :heavy_check_mark:
+### Pull Docker Images :heavy_check_mark::heavy_check_mark:
+#### Option 1 :heavy_check_mark::heavy_check_mark:
+```
+# Start pulls in the background
+for img in express ords; do
+  docker pull "container-registry.oracle.com/database/$img:latest" &
+done
+```
+#### Option 2
+```
+echo "container-registry.oracle.com/database/express:latest \
+      container-registry.oracle.com/database/ords:latest" | xargs -n1 -P2 docker pull &
+```
+#### Option 3
+```
+nohup docker pull container-registry.oracle.com/database/express:latest &
+nohup docker pull container-registry.oracle.com/database/ords:latest &
+```
+
+### Create & Run Temporary Express Container to Setup Persistent DB :heavy_check_mark::heavy_check_mark:
 Create ```.env``` file containing a ```ORACLE_PWD``` variable and a password (do not use special characters, only numbers, small and caps for compatibility reasons; Oracle recommends that the password entered should be at least 8 characters in length, contain at least 1 uppercase character, 1 lower case character and 1 digit [0-9]. Note that the same password will be used for SYS, SYSTEM and PDBADMIN accounts):
 
 ```ORACLE_PWD=<password without quotes of any kind>```, e.g., ```1230321abcABC```.
@@ -137,7 +160,21 @@ Already done in the preparation steps above.
   - `quit` the SQL prompt
   - `exit` the container's bash
 
-### Run Temporary ORDS-Developer Container to Setup the Connection to the Express DB
+### Run Temporary ORDS-Developer Container to Setup the Connection to the Express DB :construction_worker:
+
+> [!WARNING]
+> Things have changed since release of [ORDS v25](https://container-registry.oracle.com/ords/ocr/ba/database/ords). A container with an [interactive CLI](https://docs.oracle.com/en/database/oracle/oracle-rest-data-services/25.1/ordig/installing-and-configuring-oracle-rest-data-services.html#GUID-B52816FE-58C7-4B5A-8EAA-4BB191288322) can be started in order to generate the configuration files in `./ORDS/config` and establish the connection between ORDS and Express:
+> ```
+> docker run -it --network rad-oracle-apex-temp --name ords_new -v ./ORDS/config:/etc/ords/config container-registry.oracle.com/database/ords:latest install
+> ```
+> Double-check if the network name is correct (must be same as for the Express temporary container).
+
+
+
+> [!NOTE]
+> An ORDS Developer Container has to be used for the (initial) installation of APEX in the Express container's XEPDB1 database. Especially with the release of [ORDS 25.x, the installation has changed](https://container-registry.oracle.com/ords/ocr/ba/database/ords).
+> 
+
 Create the file ```conn_string.txt``` in the directory ```./ORDS/variables``` with the command `sudo nano ./ORDS/variables/conn_string.txt` and the following content:
 
 ```
@@ -152,13 +189,13 @@ CONN_STRING=sys/1230321abcABC@express:1521/XEPDB1
 
 Then run the following command to
 * create and run the temporary ORDS container ```rad-oracle-apex-ords-temp```
-* connect the ORDS container to the Express DB
+* connect the ORDS container to the Express DB & install APEX
 
 ```
 docker run \
 	-d \
 	--name rad-oracle-apex-ords-temp \
-	--network rad-oracle-apex \
+	--network rad-oracle-apex-temp \
     	-v $(pwd)/ORDS/config:/etc/ords/config \
 	-v $(pwd)/ORDS/variables:/opt/oracle/variables \
 	-p 8181:8181 \
@@ -176,17 +213,29 @@ Log into application **Oracle APEX**:
 
 After successful check, the container can be stopped and removed (```docker stop <container-name> && docker rm <container name>```; e.g. ```docker stop rad-oracle-apex-ords-temp &&  docker rm rad-oracle-apex-ords-temp```).
 
-### Set The APEX Directory In The ORDS Container
+### Set The APEX Directory In The ORDS Container :construction_worker:
+
+This might not be necessary with [ORDS v25](https://container-registry.oracle.com/ords/ocr/ba/database/ords) - TBC!
+
 > [!IMPORTANT]
 > Run the ORDS container once in order to update the config with the installed APEX files:
 > ```
 > docker run --rm -it \
->  -v $(pwd)/ORDS/config:/etc/ords/config: \
+>  -v $(pwd)/ORDS/config:/etc/ords/config \
 >  -v $(pwd)/apex/:/opt/oracle/apex/ \
 >  container-registry.oracle.com/database/ords:latest \
->  config set standalone.static.path /opt/oracle/apex/images
+>  ords config set standalone.static.path /opt/oracle/apex/images
 >  ```
 > Reason: The ords image does not contain the APEX image files.
+>
+> Result:
+>
+> ![grafik](https://github.com/user-attachments/assets/da0a0fbc-2cb1-4783-81bf-b1bc17846aef)
+
+### Remove Temporary Containers
+```
+docker rm -f rad-oracle-apex-{ords-temp,express-temp}
+```
 
 ### Run APEX with Docker Compose
 > [!IMPORTANT]
@@ -349,6 +398,16 @@ The complete settings.xml might now look similar to:
   - Identify old schema (starts with ```APEX_``` and the old version ID, e.g. ```APEX_240100```) as opposed to new schma (same user name with a higher version ID)
   - Enter ```drop user <user name> cascade;```, e.g. ```drop user APEX_240100 cascade;```
   - If an error message is returned (e.g., ```ORA-28014: cannot drop administrative user or role```), enter ```alter session set "_oracle_script"=TRUE;```and repeat the previous command
+ 
+## Update ORDS
+ORDS has been released in a [v25](https://container-registry.oracle.com/ords/ocr/ba/database/ords ). In order to configure the ORDS images (starting with v25), run a container and start the bash:
+```
+docker run -it --name ords_new -v ./ORDS/config:/etc/ords/config container-registry.oracle.com/database/ords:latest <command>
+```
+E.g.,
+```
+docker run -it --name ords_new -v ./ORDS/config:/etc/ords/config container-registry.oracle.com/database/ords:latest install
+```
 
 ## Docker Installation Sources
 ### Sources used for new attempt
@@ -364,7 +423,7 @@ The complete settings.xml might now look similar to:
 * ... and, finally, for SSL: [How to Secure Oracle APEX Development Environment with Free SSL from Let's Encrypt?](https://www.youtube.com/watch?v=cRE_kxjz_zw)
 
 ### Sources used years ago
-* oracle-apex-docker-stack [https://github.com/akridge/oracle-apex-docker-stack]
+* [oracle-apex-docker-stack](https://github.com/akridge/oracle-apex-docker-stack)
 * https://github.com/oraclebase/dockerfiles/blob/master/ords/ol8_ords/Dockerfile
 * https://oracle-base.com/articles/linux/articles-linux#docker
 * https://oracle-base.com/blog/2021/11/05/apex-21-2-vagrant-and-docker-builds/
