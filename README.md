@@ -42,7 +42,7 @@ In this context, ```rad``` is short for _**R**apid **A**pplication **D**evelopme
 
 In the case of docker service names, I use only ```express``` and ```ords``` because those service names are referred to only within the compose file.
 
-### Prepare Directories For Persistent Data :heavy_check_mark:
+### Prepare Directories For Persistent Data & Define Parameters :heavy_check_mark:
 Start in the docker project's direcctory.
 [According to Oracle](https://github.com/oracle/docker-images/blob/main/OracleDatabase/SingleInstance/README.md#running-oracle-database-in-a-container), the following rights have to be applied to the directory ```./express/oradata```:
 ```
@@ -51,22 +51,34 @@ Start in the docker project's direcctory.
                   Has to be writable by the Unix "oracle" (uid: 54321) user inside the container.
                   If omitted the database will not be persisted over container recreation.
 ```
-#### Express :heavy_check_mark::heavy_check_mark:
+#### Folders for Express & ORDS :heavy_check_mark::heavy_check_mark:
 ```
 sudo bash -c '
   mkdir -p ./express/{oradata,cfgtoollogs,scripts/startup,scripts/setup} && 
-  chown -R 54321:54321 ./express/{oradata,cfgtoollogs}
-'
-```
-The ```cfgtoollogs```-diretory is for analysis in case of database creation failure (```./cfgtoollogs/dbca/XE/XE.log```).
-
-#### ORDS :heavy_check_mark:
-```
-sudo bash -c '
+  chown -R 54321:54321 ./express/{oradata,cfgtoollogs} &&
   mkdir -p ./ORDS/{variables,config} &&
   chown -R 54321:54321 ./ORDS/{config,variables} &&
   chmod -R 777 ./ORDS/config
 '
+```
+The ```cfgtoollogs```-diretory is for analysis in case of database creation failure (```./cfgtoollogs/dbca/XE/XE.log```).
+
+#### .env File
+Create ```.env``` file containing a ```ORACLE_PWD``` variable and a password (do not use special characters, only numbers, small and caps for compatibility reasons; Oracle recommends that the password entered should be at least 8 characters in length, contain at least 1 uppercase character, 1 lower case character and 1 digit [0-9]. Note that the same password will be used for SYS, SYSTEM and PDBADMIN accounts):
+
+```ORACLE_PWD=<password without quotes of any kind>```, e.g., ```1230321abcABC```.
+
+Script: :heavy_check_mark::heavy_check_mark:
+```
+#!/bin/bash
+
+# Prompt user for ORACLE_PWD
+read -p "Enter a value for ORACLE_PWD: " ORACLE_PWD
+
+# Write the variable to .env file
+echo "ORACLE_PWD=$ORACLE_PWD" > ./.env
+
+echo "Password has been written to ./.env"
 ```
 
 ### Download  & Extract APEX Files :heavy_check_mark::heavy_check_mark:
@@ -104,24 +116,8 @@ nohup docker pull container-registry.oracle.com/database/ords:latest &
 ```
 
 ### Create & Run Temporary Express Container to Setup Persistent DB :heavy_check_mark::heavy_check_mark:
-Create ```.env``` file containing a ```ORACLE_PWD``` variable and a password (do not use special characters, only numbers, small and caps for compatibility reasons; Oracle recommends that the password entered should be at least 8 characters in length, contain at least 1 uppercase character, 1 lower case character and 1 digit [0-9]. Note that the same password will be used for SYS, SYSTEM and PDBADMIN accounts):
 
-```ORACLE_PWD=<password without quotes of any kind>```, e.g., ```1230321abcABC```.
-
-Script: :heavy_check_mark::heavy_check_mark:
-```
-#!/bin/bash
-
-# Prompt user for ORACLE_PWD
-read -p "Enter a value for ORACLE_PWD: " ORACLE_PWD
-
-# Write the variable to .env file
-echo "ORACLE_PWD=$ORACLE_PWD" > ./.env
-
-echo "Password has been written to ./.env"
-```
-
-Then run the following command to :heavy_check_mark::heavy_check_mark:
+Run the following command to :heavy_check_mark::heavy_check_mark:
 * create the network ```rad-oracle-apex-temp```
 * create and run the container ```rad-oracle-apex-express-temp```
 * set up a persistent database (stored in ```./express/oradata```)
@@ -173,17 +169,42 @@ Already done in the preparation steps above.
   - `quit` the SQL prompt
   - `exit` the container's bash
 
-### Run Temporary ORDS-Developer Container to Setup the Connection to the Express DB :construction_worker:
+### Run Temporary ORDS-Developer Container to Setup the Connection to the Express DB :heavy_check_mark::heavy_check_mark:
 
-> [!WARNING]
-> Things have changed since release of [ORDS v25](https://container-registry.oracle.com/ords/ocr/ba/database/ords). A container with an [interactive CLI](https://docs.oracle.com/en/database/oracle/oracle-rest-data-services/25.1/ordig/installing-and-configuring-oracle-rest-data-services.html#GUID-B52816FE-58C7-4B5A-8EAA-4BB191288322) can be started in order to generate the configuration files in `./ORDS/config` and establish the connection between ORDS and Express:
-> ```
-> docker run -it --network rad-oracle-apex-temp --name ords_new -v ./ORDS/config:/etc/ords/config container-registry.oracle.com/database/ords:latest install
-> ```
+> [!NOTE]
+> Things have changed since release of [ORDS v25](https://container-registry.oracle.com/ords/ocr/ba/database/ords). A container can be started in 2 ways:
+> - with an [interactive CLI](https://docs.oracle.com/en/database/oracle/oracle-rest-data-services/25.1/ordig/installing-and-configuring-oracle-rest-data-services.html#GUID-B52816FE-58C7-4B5A-8EAA-4BB191288322) can be started in order to generate the configuration files in `./ORDS/config` and establish the connection between ORDS and Express:
+>    ```
+>    docker run \
+>      -it \
+>      --rm \
+>      --network rad-oracle-apex-temp \
+>      --name ords_new \
+>      -v ./ORDS/config:/etc/ords/config \
+>      container-registry.oracle.com/database/ords:latest \
+>      install
+>    ```
+> - automated setup (no interaction) - works for this tutorial:
+>   ```
+>   docker run \
+>     -i \
+>     --rm \
+>     --network rad-oracle-apex-temp \
+>     --name ords_new \
+>     -v ./ORDS/config:/etc/ords/config \
+>     -v ./apex/:/opt/oracle/oradata/apex \
+>     container-registry.oracle.com/database/ords:latest \
+>     install \
+>       --admin-user SYS \
+>       --db-hostname express \
+>       --db-port 1521 \
+>       --db-servicename XEPDB1 \
+>       --feature-sdw true \
+>       --password-stdin < ./.password
+>   ```
 > Double-check if the network name is correct (must be same as for the Express temporary container).
 
-
-
+#### Deprecated since ORDS v25 (apparently) :construction_worker:
 > [!NOTE]
 > An ORDS Developer Container has to be used for the (initial) installation of APEX in the Express container's XEPDB1 database. Especially with the release of [ORDS 25.x, the installation has changed](https://container-registry.oracle.com/ords/ocr/ba/database/ords).
 > 
