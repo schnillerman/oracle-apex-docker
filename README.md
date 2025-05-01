@@ -144,7 +144,7 @@ docker logs -f rad-oracle-apex-express-temp
 > [!NOTE]
 > - Note that
 >   - `-e ORACLE_PWD=${ORACLE_PWD}` as in the original documentation has been removed from the script above because the password is defined in the .env file
->   - running the container for the first time (initialization of persistent data) takes a long time - on my Synology DS918+, it took ~2.5hrs
+>   - running the container for the first time (initialization of persistent data) takes a long time - on my Synology DS918+, it took ~2.5hrs, on a laptop, however, it takes, e.g., under 10 minutes
 
 ![grafik](https://github.com/user-attachments/assets/a361d077-5668-437d-8952-cd1feb861594)
 ![grafik](https://github.com/user-attachments/assets/ca11c571-ba36-4206-83c1-aaafaabb9a2f)
