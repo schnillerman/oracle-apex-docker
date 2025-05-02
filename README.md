@@ -192,7 +192,7 @@ Already done in the preparation steps above.
 >      install
 >    ```
 > - automated setup (no interaction) - works for this tutorial:
->   ```
+>   ```bash
 >   docker run \
 >     -i \
 >     --rm \
