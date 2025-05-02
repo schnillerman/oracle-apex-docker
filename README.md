@@ -226,7 +226,7 @@ After successful installation, leave SQL open for the next step
 >      -it \
 >      --rm \
 >      --network rad-oracle-apex-temp \
->      --name ords_new \
+>      --name rad-oracle-apex-ords-temp \
 >      -v ./ORDS/config:/etc/ords/config \
 >      container-registry.oracle.com/database/ords:latest \
 >      install
@@ -237,7 +237,7 @@ After successful installation, leave SQL open for the next step
 >     -i \
 >     --rm \
 >     --network rad-oracle-apex-temp \
->     --name ords_new \
+>     --name rad-oracle-apex-ords-temp \
 >     -v ./ORDS/config:/etc/ords/config \
 >     -v ./apex/:/opt/oracle/apex \
 >     container-registry.oracle.com/database/ords:latest \
@@ -253,117 +253,12 @@ After successful installation, leave SQL open for the next step
 >
 > ![grafik](https://github.com/user-attachments/assets/29f783fa-dc4e-4eeb-8c58-cc08de17cd18)
 
-### Deprecated since ORDS v25 (apparently) :construction_worker:
-> [!NOTE]
-> An ORDS Developer Container has to be used for the (initial) installation of APEX in the Express container's XEPDB1 database. Especially with the release of [ORDS 25.x, the installation has changed](https://container-registry.oracle.com/ords/ocr/ba/database/ords).
-> 
-
-Create the file ```conn_string.txt``` in the directory ```./ORDS/variables``` with the command `sudo nano ./ORDS/variables/conn_string.txt` and the following content:
-
-```bash
-CONN_STRING=sys/<ORACLE_PWD>@<express hostname>:1521/XEPDB1
-```
-
-Replace ```<ORACLE_PWD>``` with the password from the ```.env``` file and the ```<hostname>``` with the express container's hostname (```express```), e.g.:
-
-```bash
-CONN_STRING=sys/1230321abcABC@express:1521/XEPDB1
-```
-
-Then run the following command to
-* create and run the temporary ORDS container ```rad-oracle-apex-ords-temp```
-* connect the ORDS container to the Express DB & install APEX
-
-```bash
-docker run \
-	-d \
-	--name rad-oracle-apex-ords-temp \
-	--network rad-oracle-apex-temp \
-    	-v $(pwd)/ORDS/config:/etc/ords/config \
-	-v $(pwd)/ORDS/variables:/opt/oracle/variables \
-	-p 8181:8181 \
-    	container-registry.oracle.com/database/ords-developer:latest && \
-docker logs -f rad-oracle-apex-ords-temp
-```
-If you don't want to check right now, add the line ```--rm \``` after ```-d \``` in order to remove the temporary container after APEX is installed.
-
-If you want to check, run the command as is, and open ```http://<docker-host>:8181/ords``` to see whether the APEX environment has been installed successfully.
-
-Log into application **Oracle APEX**:
-- Workspace: ```internal```
-- User:      ```ADMIN```
-- Password:  ```Welcome_1```
-
-After successful check, the container can be stopped and removed (```docker stop <container-name> && docker rm <container name>```; e.g. ```docker stop rad-oracle-apex-ords-temp &&  docker rm rad-oracle-apex-ords-temp```).
-
-## 7 - Set The APEX Directory In The ORDS Container :heavy_check_mark::heavy_check_mark:
-
-This is different with [ORDS v25](https://container-registry.oracle.com/ords/ocr/ba/database/ords).
-
-Run the ORDS container as follows in order to update the config with the APEX images folder location:
-
-```bash
-docker run -d \
-  --rm
-  --network rad-oracle-apex-temp \
-  --name ords_new \
-  -v ./ORDS/config:/etc/ords/config \
-  -v ./apex/:/opt/oracle/apex \
-  container-registry.oracle.com/database/ords:latest && \
-docker logs -f ords_new
-```
-
-![grafik](https://github.com/user-attachments/assets/d19fccd1-b0d1-4552-9ddc-5c9b801b153b)
-
-Once the folder has been set, stop the container.
-
-> [!NOTE]
-> This might not even be necessary since the same volume is connected later in the docker-compose file for the final ORDS container.
-
-### Deprecated :construction_worker:
-
-> [!IMPORTANT]
-> Run the ORDS container once in order to update the config with the installed APEX files:
-> ```
-> docker run --rm -it \
->  -v $(pwd)/ORDS/config:/etc/ords/config \
->  -v $(pwd)/apex/:/opt/oracle/apex/ \
->  container-registry.oracle.com/database/ords:latest \
->  ords config set standalone.static.path /opt/oracle/apex/images
->  ```
-> Reason: The ords image does not contain the APEX image files.
->
-> Result:
->
-> ![grafik](https://github.com/user-attachments/assets/da0a0fbc-2cb1-4783-81bf-b1bc17846aef)
-
-### Remove Temporary Containers
+## 7 - Remove Temporary Containers :heavy_check_mark::heavy_check_mark:
 ```bash
 docker rm -f rad-oracle-apex-{ords-temp,express-temp}
 ```
 
-## 8 - Run APEX with Docker Compose :construction_worker:
-> [!WARNING]
-> There is still some stuff to document here without using the ORDS developer image.
-> - First login after starting docker-compose showed APEX unavailable.
-> - After docker-compose down/up, for some reason, it worked, but APEX_PUBLIC_USER account was locked and [had to be unlocked](https://docs.oracle.com/en/database/oracle/apex/24.2/htmig/downloading-installing-apex.html#GUID-0619448A-56FB-43E1-A479-C45EC5002E4B):
->   - bash into the Express container:
->     ```
->     sqlplus sys/${ORACLE_PWD}@express:1521/XEPDB1 AS SYSDBA
->     ```
->   - [list locked accounts](https://mattmulvaney.hashnode.dev/unexpiring-the-ordspublicuser-user-for-apex):
->     ```
->     COLUMN username FORMAT A32
->     COLUMN account_status FORMAT A32
->     select username, account_status from dba_users where username like 'APEX%' or username like 'ORDS%';
-> **As a consequence, I guess some more [steps of the official documentation](https://docs.oracle.com/en/database/oracle/apex/24.2/htmig/downloading-installing-apex.html#HTMIG-GUID-4062E1F0-2772-48FC-A4AA-436F326CF751) must be performed as well**
-
-
-> [!IMPORTANT]
-> If you want to run APEX with docker compose, you have to stop and remove all existing containers and the network you created previously:
-> ```bash
-> docker stop rad-oracle-apex-express && docker stop rad-oracle-apex-ords && (docker remove rad-oracle-apex-express & docker remove rad-oracle-apex-ords) && docker system prune -f
-> ```
+## 8 - Run APEX with Docker Compose :heavy_check_mark::heavy_check_mark:
 ```yaml
 services:
   express: # XE database
