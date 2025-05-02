@@ -148,25 +148,71 @@ docker logs -f rad-oracle-apex-express-temp
 ### Download APEX :heavy_check_mark:
 Already done in the preparation steps above.
 ### Install APEX in the Express DB :heavy_check_mark:
-- Create a shell in the express container: ```docker exec -it rad-oracle-apex-express-temp bash```
-- Change to the mounted apex directory: ```cd /opt/oracle/oradata/apex```
-- [Connect to the DB _XEPDB1_](https://container-registry.oracle.com/ords/ocr/ba/database/express):
-  - In separate steps:
-    - Start SQL: ```sqlplus /nolog``` (note that unlike described in the [documentation](https://docs.oracle.com/en/database/oracle/apex/24.1/htmig/downloading-installing-apex.html#HTMIG-GUID-7E432C6D-CECC-4977-B183-3C654380F7BF), steps 4 and 6, instead of ```sql```, ```sqlplus``` is used)
-    - Connect to DB _XEPDB1_:
-      - With extra PW prompt: ```CONNECT SYS@<express hostname>:1521/XEPDB1 as SYSDBA```; enter PW (defined in ```.env```-file)
-      - With PW in command: ```CONNECT SYS/<ORACLE_PWD>@<express hostname>:1521/XEPDB1 as SYSDBA```
-- [In single step](https://docs.oracle.com/en/database/oracle/oracle-database/21/xeinl/connecting-oracle-database-free.html):
-  ```bash
-  cd /opt/oracle/oradata/apex && sqlplus sys/${ORACLE_PWD}@<express hostname>:1521/XEPDB1 AS SYSDBA
-  ```
-  e.g.,
-  ```bash
-  cd /opt/oracle/oradata/apex && sqlplus sys/${ORACLE_PWD}@express:1521/XEPDB1 AS SYSDBA
-  ```
-  (note that `${ORACLE_PWD}` does not have to be replaced here since taken from the environment variable in this case; also, this will be used for the CONN_STRING file below, but there, ORACLE_PWD needs to be explicit)
-- Run install script: ```@apexins.sql SYSAUX SYSAUX TEMP /i/```
-- After successful installation,
+1. Create a shell in the express container:
+   ```bash
+   docker exec -it rad-oracle-apex-express-temp bash
+   ```
+3. Change to the mounted apex directory:
+   ```bash
+   cd /opt/oracle/oradata/apex
+   ```
+5. [Connect to the DB _XEPDB1_](https://container-registry.oracle.com/ords/ocr/ba/database/express):
+   - In separate steps:
+     1. Start SQL:
+        ```bash
+        sqlplus /nolog
+        ```
+        (note that unlike described in the [documentation](https://docs.oracle.com/en/database/oracle/apex/24.2/htmig/downloading-installing-apex.html#HTMIG-GUID-7E432C6D-CECC-4977-B183-3C654380F7BF), steps 4 and 6, instead of ```sql```, ```sqlplus``` is used)
+     2. Connect to DB _XEPDB1_:
+        - With extra PW prompt:
+          1. ```bash
+             CONNECT SYS@<express hostname>:1521/XEPDB1 as SYSDBA
+             ```
+          2. enter PW (defined in ```.env```-file)
+        - With PW in command:
+          ```bash
+          CONNECT SYS/<ORACLE_PWD>@<express hostname>:1521/XEPDB1 as SYSDBA
+          ```
+   - [In single step](https://docs.oracle.com/en/database/oracle/oracle-database/21/xeinl/connecting-oracle-database-free.html):
+     ```bash
+     cd /opt/oracle/oradata/apex && sqlplus sys/${ORACLE_PWD}@<express hostname>:1521/XEPDB1 AS SYSDBA
+     ```
+     e.g.,
+     ```bash
+     cd /opt/oracle/oradata/apex && sqlplus sys/${ORACLE_PWD}@express:1521/XEPDB1 AS SYSDBA
+     ```
+     (note that `${ORACLE_PWD}` does not have to be replaced here since taken from the environment variable in this case; also, this will be used for the CONN_STRING file below, but there, ORACLE_PWD needs to be explicit)
+6. Run install script: ```@apexins.sql SYSAUX SYSAUX TEMP /i/```
+After successful installation, leave SQL open for the next step
+
+### Final Preparations
+1. [Create the Instance Administration Account](https://docs.oracle.com/en/database/oracle/apex/24.2/htmig/downloading-installing-apex.html#HTMIG-GUID-4062E1F0-2772-48FC-A4AA-436F326CF751):
+   In the same SQL prompt as before, enter
+   ```sql
+   @apxchpwd.sql
+   ```
+   to create the workspace admin account.
+3. [Unlock APEX_PUBLIC_USER account](https://docs.oracle.com/en/database/oracle/apex/24.2/htmig/downloading-installing-apex.html#HTMIG-GUID-97410621-4E32-48A1-9112-AB0329B3FE73):
+   In the same SQL prompt as before, enter
+   ```sql
+   ALTER USER APEX_PUBLIC_USER ACCOUNT UNLOCK;
+   ```
+5. [Change password](https://docs.oracle.com/en/database/oracle/apex/24.2/htmig/downloading-installing-apex.html#HTMIG-GUID-EE55AB65-51CC-450C-9675-C6010EE95630) (optional?):
+   ```sql
+   ALTER USER APEX_PUBLIC_USER IDENTIFIED BY <new_password>;
+   ```
+6. [Unlimit account expiration](https://docs.oracle.com/en/database/oracle/apex/24.2/htmig/downloading-installing-apex.html#HTMIG-GUID-FFD93D3E-7B9D-4786-B9EE-0F4575591B8F):
+   From a [blog post](https://alanarentsen.blogspot.com/2013/02/about-password-expiration-in-oracle.html):
+   1. Create unlimited expiration profile _apex_public_:
+      ```sql
+      create profile apex_public limit
+        password_life_time unlimited;
+      ```
+   2. Assign profile to user:
+      ```sql
+      alter user apex_public_user
+        profile apex_public;
+      ```
   - `quit` the SQL prompt
   - `exit` the container's bash
 
@@ -201,7 +247,7 @@ Already done in the preparation steps above.
 >       --db-port 1521 \
 >       --db-servicename XEPDB1 \
 >       --feature-sdw true \
->       --password-stdin < ./.password
+>       --password-stdin < <(grep '^ORACLE_PWD=' .env | cut -d= -f2-)
 >   ```
 > Double-check if the network name is correct (must be same as for the Express temporary container).
 >
