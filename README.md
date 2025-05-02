@@ -99,20 +99,14 @@ The files should now reside in ```./apex```.
 ## 3 - Pull Docker Images :heavy_check_mark::heavy_check_mark:
 ### Option 1 - _loop_ :heavy_check_mark::heavy_check_mark:
 ```bash
-# Start pulls in the background
 for img in express ords; do
-  docker pull "container-registry.oracle.com/database/$img:latest" &
+  docker pull "container-registry.oracle.com/database/$img:latest"
 done
 ```
 ### Option 2 - _xargs_
 ```bash
-echo "container-registry.oracle.com/database/express:latest \
-      container-registry.oracle.com/database/ords:latest" | xargs -n1 -P2 docker pull &
-```
-### Option 3 - _nohup_
-```bash
-nohup docker pull container-registry.oracle.com/database/express:latest &
-nohup docker pull container-registry.oracle.com/database/ords:latest &
+echo "container-registry.oracle.com/database/"{express,ords}":latest" \
+  | xargs -n1 docker pull
 ```
 
 ## 4 - Create & Run Temporary Express Container to Setup Persistent DB :heavy_check_mark::heavy_check_mark:
