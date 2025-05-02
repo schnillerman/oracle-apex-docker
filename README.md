@@ -81,7 +81,7 @@ echo "ORACLE_PWD=$ORACLE_PWD" > ./.env
 echo "Password has been written to ./.env"
 ```
 
-## 3 - Download  & Extract APEX Files :heavy_check_mark::heavy_check_mark:
+## 2 - Download  & Extract APEX Files :heavy_check_mark::heavy_check_mark:
 Download and extract the latest APEX files to the project directory; the APEX ZIP file contains the apex directory as root, so no extra dir has to be created.
 
 If you have unzip: :heavy_check_mark::heavy_check_mark:
@@ -96,7 +96,7 @@ curl -o apex.zip https://download.oracle.com/otn_software/apex/apex-latest.zip &
 ```
 The files should now reside in ```./apex```.
 
-## 4 - Pull Docker Images :heavy_check_mark::heavy_check_mark:
+## 3 - Pull Docker Images :heavy_check_mark::heavy_check_mark:
 ### Option 1 - _loop_ :heavy_check_mark::heavy_check_mark:
 ```bash
 # Start pulls in the background
@@ -115,7 +115,7 @@ nohup docker pull container-registry.oracle.com/database/express:latest &
 nohup docker pull container-registry.oracle.com/database/ords:latest &
 ```
 
-## 5 - Create & Run Temporary Express Container to Setup Persistent DB :heavy_check_mark::heavy_check_mark:
+## 4 - Create & Run Temporary Express Container to Setup Persistent DB :heavy_check_mark::heavy_check_mark:
 Run the following command to :heavy_check_mark::heavy_check_mark:
 * create the network ```rad-oracle-apex-temp```
 * create and run the container ```rad-oracle-apex-express-temp```
@@ -149,7 +149,7 @@ docker logs -f rad-oracle-apex-express-temp
 > 
 > Keep the container running for the next steps of the installation (until you start the containers with docker-compose).
 
-## 6 - Install APEX :heavy_check_mark:
+## 5 - Install APEX :heavy_check_mark:
 
 ### Download APEX :heavy_check_mark:
 Already done in the preparation steps above.
@@ -176,7 +176,7 @@ Already done in the preparation steps above.
   - `quit` the SQL prompt
   - `exit` the container's bash
 
-## 7 - Run Temporary ORDS-Developer Container to Setup the Connection to the Express DB :heavy_check_mark::heavy_check_mark:
+## 6 - Run Temporary ORDS-Developer Container to Setup the Connection to the Express DB :heavy_check_mark::heavy_check_mark:
 
 > [!NOTE]
 > Things have changed since release of [ORDS v25](https://container-registry.oracle.com/ords/ocr/ba/database/ords). A container can be started in 2 ways:
@@ -256,7 +256,7 @@ Log into application **Oracle APEX**:
 
 After successful check, the container can be stopped and removed (```docker stop <container-name> && docker rm <container name>```; e.g. ```docker stop rad-oracle-apex-ords-temp &&  docker rm rad-oracle-apex-ords-temp```).
 
-## 8 - Set The APEX Directory In The ORDS Container :heavy_check_mark::heavy_check_mark:
+## 7 - Set The APEX Directory In The ORDS Container :heavy_check_mark::heavy_check_mark:
 
 This is different with [ORDS v25](https://container-registry.oracle.com/ords/ocr/ba/database/ords).
 
@@ -302,7 +302,7 @@ Once the folder has been set, stop the container.
 docker rm -f rad-oracle-apex-{ords-temp,express-temp}
 ```
 
-## 9 - Run APEX with Docker Compose :construction_worker:
+## 8 - Run APEX with Docker Compose :construction_worker:
 > [!WARNING]
 > There is still some stuff to document here without using the ORDS developer image.
 > - First login after starting docker-compose showed APEX unavailable.
@@ -382,7 +382,7 @@ In case you want to [debug the healthcheck](https://adamtuttle.codes/blog/2021/d
 
 Once the express-container has started up, the exit code changes from 3 over 2 to 0 (0=healthy). 
 
-## 10 - Log In
+## 9 - Log In
 ### APEX Workspace
 1. Go to your instance's APEX homepage, e.g., ```http://<docker-host>```.
 2. Select _Oracle APEX_ (the middle pane)
@@ -453,15 +453,15 @@ Well, that's a whole different story: [_The workspace/database schema needs to b
 > ```
 > This solution might work, with me, it didn't. However, the ORDS update from Nov. 8, 2024, solved the issue.
 
-## Access APEX from WAN with HTTPS / Reverse Proxy
+## 10 - Access APEX from WAN with HTTPS / Reverse Proxy
 Put the following 2 lines into ```./ORDS/config/global/settings.xml```, replacing ```<your apex domain, no trailing slash>``` with your domain's name:
-```
+```xml
 <entry key="security.externalSessionTrustedOrigins">http://<your apex domain, no trailing slash>, https://<your apex domain, no trailing slash>:443</entry>
 <entry key="security.forceHTTPS">true</entry>
 ```
 
 The complete settings.xml might now look similar to:
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
