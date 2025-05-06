@@ -87,7 +87,7 @@ Download and extract the latest APEX files to the project directory; the APEX ZI
 If you have unzip: :heavy_check_mark::heavy_check_mark:
 ```bash
 curl -o apex.zip https://download.oracle.com/otn_software/apex/apex-latest.zip && \
-unzip -q apex.zip
+unzip -o apex.zip
 ```
 If you have 7z (e.g., Synology NAS): :heavy_check_mark::heavy_check_mark:
 ```
