@@ -19,7 +19,7 @@ echo "ORACLE_PWD=$ORACLE_PWD" > ./.env
 # Schritt 3: APEX herunterladen und entpacken
 echo "Lade APEX herunter..."
 curl -o apex.zip https://download.oracle.com/otn_software/apex/apex-latest.zip && \
-unzip -q apex.zip
+unzip -o apex.zip
 rm apex.zip
 
 # Schritt 4: Docker-Images herunterladen
