@@ -409,6 +409,18 @@ The complete settings.xml might now look similar to:
 <entry key="security.forceHTTPS">true</entry>
 </properties>
 ```
+> [!IMPORTANT]
+> If traefik is used as reverse proxy, the 2 APEX services (Express-DB and ORDS share one network, ORDS uses an additional network shared with traefik. Therefore, traefik needs to know which network to use for ORDS. Define it by adding the following lines to APEX' `compose.yml`:
+> - To the ORDS service: `traefik.docker.network=[network-name, e.g., web-tools-traefik-net]`
+> - As a networks definition:
+>   ```
+>   networks:
+>     apex:
+>       name: rad-oracle-apex
+>     traefik:
+>       name: web-tools-traefik-net
+>         external: true
+
 ## 11 - Update
 ### APEX
 - Perform all steps described in [Install APEX](#install-apex)
