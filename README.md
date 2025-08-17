@@ -46,7 +46,7 @@ Here's the recipe to get this done:
   * [8 - Run APEX with Docker Compose :heavy_check_mark::heavy_check_mark:](#8---run-apex-with-docker-compose--heavy-check-mark--heavy-check-mark-)
   * [9 - Log In](#9---log-in)
     + [APEX Workspace](#apex-workspace)
-    + [[APEX Administration](https://docs.oracle.com/en/database/oracle/apex/24.1/aeadm/accessing-oracle-application-express-administration-services.html#GUID-C325A307-7047-4FCB-86B7-F7771069F995)](#-apex-administration--https---docsoraclecom-en-database-oracle-apex-241-aeadm-accessing-oracle-application-express-administration-serviceshtml-guid-c325a307-7047-4fcb-86b7-f7771069f995-)
+    + [APEX Administration](#-apex-administration)
     + [SQL Developer Web (SDW): Set Up & Log In](#sql-developer-web--sdw---set-up---log-in)
   * [10 - Access APEX from WAN with HTTPS / Reverse Proxy](#10---access-apex-from-wan-with-https---reverse-proxy)
   * [11 - Update](#11---update)
